@@ -1,0 +1,446 @@
+:root {
+  --bg-primary: #07090e;
+  --bg-secondary: #0d1322;
+  --bg-card: rgba(14, 20, 36, 0.72);
+  --bg-card-hover: rgba(20, 29, 52, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(0, 242, 254, 0.3);
+  --border-purple: rgba(138, 43, 226, 0.3);
+  --cyan: #00f2fe;
+  --blue: #38bdf8;
+  --purple: #a855f7;
+  --emerald: #10b981;
+  --amber: #f59e0b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--cyan);
+}
+
+/* Typography */
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--border-glow);
+  box-shadow: 0 10px 30px -10px rgba(0, 242, 254, 0.15);
+}
+
+/* Gradient Texts */
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #ffffff 10%, #00f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.gradient-text-purple {
+  background: linear-gradient(135deg, #38bdf8 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Cyber Button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #0284c7 0%, #00f2fe 100%);
+  color: #07090e;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.6);
+  color: #000;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--cyan);
+  color: var(--cyan);
+  transform: translateY(-2px);
+}
+
+.btn-admin {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  color: #fbbf24;
+}
+
+.btn-admin:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+/* Animations */
+@keyframes floatAnimation {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.7);
+  }
+}
+
+@keyframes soundWave {
+  0%, 100% {
+    height: 4px;
+  }
+  50% {
+    height: 22px;
+  }
+}
+
+.animate-float {
+  animation: floatAnimation 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s infinite;
+}
+
+/* Sound Wave Bars */
+.sound-bar {
+  width: 3px;
+  background: var(--cyan);
+  border-radius: 2px;
+  display: inline-block;
+  animation: soundWave 1s ease-in-out infinite;
+}
+.sound-bar:nth-child(2) { animation-delay: 0.15s; }
+.sound-bar:nth-child(3) { animation-delay: 0.3s; }
+.sound-bar:nth-child(4) { animation-delay: 0.45s; }
+.sound-bar:nth-child(5) { animation-delay: 0.2s; }
+
+/* 3D Section Perspective */
+.perspective-container {
+  perspective: 1000px;
+}
+
+.tilt-element {
+  transition: transform 0.2s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* Badge Styles */
+.tech-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  border-radius: 20px;
+  background: rgba(0, 242, 254, 0.08);
+  color: var(--cyan);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+}
+
+.tech-pill-purple {
+  background: rgba(168, 85, 247, 0.08);
+  color: #c084fc;
+  border-color: rgba(168, 85, 247, 0.25);
+}
+
+.tech-pill-emerald {
+  background: rgba(16, 185, 129, 0.08);
+  color: #34d399;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 9, 14, 0.85);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Form Controls */
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(13, 19, 34, 0.9);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.2);
+}
+
+/* Scroll Down Cue Animations */
+@keyframes scrollWheel {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@keyframes chevronBounce {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+/* Scroll Reveal Fade-in Animations */
+@keyframes fadeInUpSlow {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-reveal {
+  animation: fadeInUpSlow 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ==========================================================================
+   Comprehensive Multi-Device Responsiveness (Mobile, Tablet, Laptop, PC, TV)
+   ========================================================================== */
+
+/* Universal Responsive Image & Media Handling */
+img, video, canvas, svg {
+  max-width: 100%;
+}
+
+/* 1. Mobile Devices (Portrait & Landscape: 320px – 640px) */
+@media (max-width: 640px) {
+  html {
+    font-size: 15px;
+  }
+
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Compact button styling on mobile */
+  .btn-primary, .btn-secondary {
+    padding: 10px 18px;
+    font-size: 0.88rem;
+    min-height: 44px; /* Touch target accessibility */
+  }
+
+  .hero-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+
+  .hero-buttons .btn-primary,
+  .hero-buttons .btn-secondary {
+    flex: 1 1 140px;
+    text-align: center;
+  }
+
+  /* Modals on Mobile: full width and comfortable padding */
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .glass-panel {
+    border-radius: 16px;
+  }
+
+  /* Form inputs touch-friendly */
+  .form-input {
+    font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+    padding: 12px 14px;
+    min-height: 44px;
+  }
+}
+
+/* 2. Foldables & Small Tablets (641px – 768px) */
+@media (min-width: 641px) and (max-width: 768px) {
+  .btn-primary, .btn-secondary {
+    padding: 11px 20px;
+  }
+}
+
+/* 3. Tablets & Small Laptops (769px – 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .hero-section {
+    padding-top: 100px;
+  }
+}
+
+/* 4. Standard PC & Laptops (1025px – 1919px) */
+@media (min-width: 1025px) {
+  .desktop-nav {
+    display: flex !important;
+  }
+  .mobile-toggle {
+    display: none !important;
+  }
+}
+
+/* 5. Ultra-Wide Displays, 2K & 4K TVs (1920px – 3840px+) */
+@media (min-width: 2000px) {
+  html {
+    font-size: 18px;
+  }
+
+  body {
+    max-width: 2560px;
+    margin: 0 auto;
+  }
+
+  .glass-panel {
+    border-width: 1.5px;
+  }
+
+  .btn-primary, .btn-secondary {
+    padding: 14px 28px;
+    font-size: 1.05rem;
+    border-radius: 14px;
+  }
+}
+
+/* 6. High-DPI / Retina Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .glass-panel {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+}
+
+/* 7. Accessibility: Reduced Motion Preference */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
