@@ -56,7 +56,7 @@ export default function Footer({ onOpenAdmin, onOpenResume }) {
             <a href="https://www.linkedin.com/in/surya-kiran-967659351?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }} title="LinkedIn">
               <LinkedinIcon size={18} />
             </a>
-            <a href="https://www.instagram.com/jstt.kiran?igsh=aG83M255aG1wZTho" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }} title="Instagram">
+            <a href="https://www.instagram.com/sury.akirann" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }} title="Instagram">
               <InstagramIcon size={18} />
             </a>
             <a href="mailto:suryakiranpjineesh@gmail.com" style={{ color: 'var(--text-secondary)' }} title="Email">

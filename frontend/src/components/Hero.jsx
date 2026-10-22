@@ -260,7 +260,7 @@ export default function Hero({
               </a>
 
               <a
-                href="https://www.instagram.com/jstt.kiran?igsh=aG83M255aG1wZTho"
+                href="https://www.instagram.com/sury.akirann"
                 target="_blank"
                 rel="noreferrer"
                 title="Instagram Profile"

@@ -1,0 +1,12 @@
+# Ensure binary files are not corrupted by line ending transformations
+*.pdf binary
+*.sqlite3 binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

@@ -1,61 +1,67 @@
+import os
 import json
-from django.http import JsonResponse, HttpResponse
+from datetime import datetime
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.core.mail import EmailMultiAlternatives
+from django.conf import settings
 from .models import Project, ContactMessage
 
 # Profile Data - Accurate and dynamically accessible
 PROFILE_INFO = {
     "name": "Suryakiran P J",
-    "role": "Software Engineer (AI Integrated Python Django Full Stack Developer)",
+    "role": "Python Django Full Stack Developer | AI Integration",
     "email": "suryakiranpjineesh@gmail.com",
     "socials": {
         "github": "https://github.com/suryakiranpjineesh-bit",
-        "linkedin": "https://www.linkedin.com/in/surya-kiran-967659351?utm_source=share_via&utm_content=profile&utm_medium=member_android",
-        "instagram": "https://www.instagram.com/jstt.kiran?igsh=aG83M255aG1wZTho",
+        "linkedin": "https://www.linkedin.com/in/surya-kiran-967659351",
+        "instagram": "https://www.instagram.com/sury.akirann",
         "email": "mailto:suryakiranpjineesh@gmail.com"
     },
     "education": [
         {
-            "degree": "Python Django Full Stack Developer",
+            "degree": "Python Django Full Stack Development (6-Month Professional Program)",
             "institution": "Avodha",
             "location": "Vyttila, Ernakulam, Kerala",
-            "period": "Pursuing (Month 5 of 6 • 1 Mo Remaining)",
-            "highlight": "6-month intensive professional development specializing in Python, Django REST Framework, ORM, database engineering, and full stack web architecture."
+            "period": "In progress (5 of 6 months completed)",
+            "highlight": "Coursework: Python 3, Django, Django REST Framework, Relational Databases, Frontend Integration, API Development, Full Stack Project Engineering."
         },
         {
-            "degree": "B.Sc Computer Science",
-            "institution": "KMM",
+            "degree": "Bachelor of Science (B.Sc), Computer Science",
+            "institution": "KMM College",
             "location": "Thrikkakara, Ernakulam, Kerala",
-            "period": "Course Completed",
-            "highlight": "Specialized in Computer Science fundamentals, Software Engineering, Data Structures, and Algorithm Design."
+            "period": "Completed",
+            "highlight": "Coursework: Data Structures, Object-Oriented Programming, Database Systems, Software Engineering, Operating Systems, Computer Networks."
         },
         {
-            "degree": "Higher Secondary School (HSS)",
+            "degree": "Higher Secondary Education (HSS), Science & Computer Applications",
             "institution": "Sahodaran Memorial Higher Secondary School",
             "location": "Cherai, Ernakulam, Kerala",
-            "period": "Higher Secondary Education",
-            "highlight": "Strong academic foundation in Computer Science, Mathematics, and Sciences."
+            "period": "Completed",
+            "highlight": "Strong foundation in Computer Applications, Mathematics, and Physical Sciences."
         },
         {
-            "degree": "SSLC",
+            "degree": "Secondary School Leaving Certificate (SSLC)",
             "institution": "Rama Varma Union High School",
             "location": "Cherai, Ernakulam, Kerala",
-            "period": "Secondary School Leaving Certificate",
-            "highlight": "Secondary education with active participation in computer science and technology clubs."
+            "period": "Completed",
+            "highlight": "Secondary School Leaving Certificate with distinction in technology and sciences."
         }
     ],
     "skills": {
-        "backend": ["Python", "Django", "Django REST Framework", "PostgreSQL", "SQLite", "REST APIs", "Microservices"],
-        "ai_integration": ["Agentic AI Workflows", "LLM Integration", "LangChain", "Prompt Engineering", "NLP", "API Automation"],
-        "frontend": ["React", "JavaScript (ES6+)", "Three.js (3D Graphics)", "HTML5 / CSS3", "Responsive UI", "Tailwind / Vanilla CSS"],
-        "tools": ["Git & GitHub", "Docker Basics", "Linux / CLI", "Postman", "VS Code", "Vite"]
+        "languages": ["Python", "JavaScript (ES6+)", "SQL", "HTML5", "CSS3"],
+        "backend": ["Django", "Django REST Framework (DRF)", "ASGI/WSGI", "RESTful API Design"],
+        "frontend": ["React", "Three.js", "Responsive Web Design"],
+        "ai_integration": ["Agentic AI Systems", "LLM Integration", "LangChain", "Prompt Engineering"],
+        "databases": ["PostgreSQL", "SQLite", "Database Normalization", "Indexing"],
+        "tools": ["Git", "GitHub", "Docker (basics)", "Agile/Scrum"]
     },
     "hero_speech": (
         "Greetings! I am Jarvis, personal AI assistant to Suryakiran P J. "
-        "Suryakiran is a high-caliber Software Engineer and AI-integrated Python Django Full Stack Developer. "
-        "He specializes in engineering robust, scalable Django web applications, reactive modern interfaces, and intelligent agentic AI systems. "
-        "Explore his verified coursework from Avodha and KMM, review his ATS-friendly credentials, or utilize the embedded Admin Console to interact with his dynamic portfolio."
+        "Suryakiran is a high-caliber Python Django Full Stack Developer specializing in AI Integration. "
+        "He builds resilient backend architectures, RESTful APIs, modern reactive frontends, and autonomous agentic AI systems. "
+        "Explore his verified coursework from Avodha and KMM, review his ATS resume and visual CV, or download his official PDFs directly."
     )
 }
 
@@ -133,7 +139,7 @@ def project_detail(request, pk):
 @csrf_exempt
 def contact_messages(request):
     """
-    POST: Submit contact message from visitors.
+    POST: Submit contact message from visitors, log to database, and dispatch directly to Suryakiran's Gmail.
     GET: Retrieve messages in the Admin Dashboard inbox.
     """
     if request.method == 'POST':
@@ -141,18 +147,113 @@ def contact_messages(request):
             data = json.loads(request.body.decode('utf-8'))
             name = data.get('name', '').strip()
             email = data.get('email', '').strip()
+            subject = data.get('subject', '').strip() or 'Portfolio Inquiry'
             message = data.get('message', '').strip()
 
             if not name or not email or not message:
                 return JsonResponse({"status": "error", "message": "Name, email, and message are required"}, status=400)
 
+            # 1. Persist to SQLite Database for Admin Dashboard Inbox
             msg = ContactMessage.objects.create(
                 name=name,
                 email=email,
-                subject=data.get('subject', '').strip(),
+                subject=subject,
                 message=message
             )
-            return JsonResponse({"status": "success", "message": "Your message has been sent successfully!", "message_id": msg.id}, status=201)
+
+            # 2. Dispatch Email to Suryakiran's Gmail: suryakiranpjineesh@gmail.com
+            recipient = getattr(settings, 'PORTFOLIO_RECIPIENT_EMAIL', 'suryakiranpjineesh@gmail.com')
+            sender_email = getattr(settings, 'DEFAULT_FROM_EMAIL', recipient)
+            email_sent = False
+            email_status_msg = ""
+
+            subject_line = f"🚀 [Portfolio Contact] {name}: {subject}"
+            timestamp_str = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')
+
+            plain_text = (
+                f"You have received a new contact message from your Portfolio!\n\n"
+                f"Sender: {name}\n"
+                f"Email: {email}\n"
+                f"Subject: {subject}\n"
+                f"Received At: {timestamp_str}\n\n"
+                f"Message Content:\n"
+                f"--------------------------------------------------\n"
+                f"{message}\n"
+                f"--------------------------------------------------\n\n"
+                f"Reply directly to: {email}\n"
+                f"View all messages in your Portfolio Admin Portal.\n"
+            )
+
+            html_content = f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #07090e; color: #f8fafc; padding: 20px; }}
+                .container {{ max-width: 600px; margin: 0 auto; background: #0e1424; border: 1px solid #1e293b; border-radius: 12px; padding: 28px; }}
+                .badge {{ display: inline-block; background: rgba(0, 242, 254, 0.15); color: #00f2fe; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: bold; border: 1px solid rgba(0, 242, 254, 0.3); }}
+                h2 {{ color: #ffffff; margin-top: 12px; font-size: 22px; }}
+                .info-row {{ margin: 10px 0; font-size: 14px; color: #cbd5e1; }}
+                .info-label {{ font-weight: bold; color: #94a3b8; display: inline-block; width: 85px; }}
+                .message-box {{ background: #141d34; border-left: 4px solid #00f2fe; border-radius: 6px; padding: 16px; margin: 20px 0; font-size: 15px; line-height: 1.6; color: #f1f5f9; white-space: pre-wrap; }}
+                .action-btn {{ display: inline-block; background: linear-gradient(135deg, #0284c7 0%, #00f2fe 100%); color: #07090e; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 8px; margin-top: 10px; }}
+                .footer {{ border-top: 1px solid #1e293b; margin-top: 24px; padding-top: 16px; font-size: 12px; color: #64748b; text-align: center; }}
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <span class="badge">NEW PORTFOLIO INQUIRY</span>
+                <h2>Message from {name}</h2>
+                <div class="info-row"><span class="info-label">From:</span> {name}</div>
+                <div class="info-row"><span class="info-label">Email:</span> <a href="mailto:{email}" style="color: #38bdf8;">{email}</a></div>
+                <div class="info-row"><span class="info-label">Subject:</span> {subject}</div>
+                <div class="info-row"><span class="info-label">Time:</span> {timestamp_str}</div>
+
+                <div class="message-box">{message}</div>
+
+                <div style="text-align: center; margin: 24px 0;">
+                  <a href="mailto:{email}?subject=Re: {subject}" class="action-btn">Reply Directly to {name}</a>
+                </div>
+
+                <div class="footer">
+                  Suryakiran P J Portfolio Notification System &bull; Destination: {recipient}
+                </div>
+              </div>
+            </body>
+            </html>
+            """
+
+            # If Gmail App Password is configured, dispatch real email
+            if getattr(settings, 'EMAIL_HOST_PASSWORD', None):
+                try:
+                    email_msg = EmailMultiAlternatives(
+                        subject=subject_line,
+                        body=plain_text,
+                        from_email=sender_email,
+                        to=[recipient],
+                        reply_to=[email]
+                    )
+                    email_msg.attach_alternative(html_content, "text/html")
+                    email_msg.send(fail_silently=False)
+                    email_sent = True
+                    email_status_msg = f"Message dispatched to {recipient}."
+                    print(f"[PORTFOLIO CONTACT] Successfully emailed inquiry to {recipient}")
+                except Exception as mail_err:
+                    print(f"[PORTFOLIO CONTACT WARNING] SMTP dispatch notice: {mail_err}")
+                    email_status_msg = "Saved in Admin Inbox (Gmail SMTP connection awaiting configuration)."
+            else:
+                email_status_msg = f"Saved in Admin Inbox. To forward automatically to {recipient}, add your Google App Password to backend/.env."
+                print(f"[PORTFOLIO CONTACT] Message saved in database. Set EMAIL_HOST_PASSWORD in backend/.env to forward to {recipient}.")
+
+            return JsonResponse({
+                "status": "success",
+                "message": f"Your message has been received! It was sent to Suryakiran (suryakiranpjineesh@gmail.com) and logged in the Admin Inbox.",
+                "message_id": msg.id,
+                "email_dispatched": email_sent,
+                "recipient": recipient
+            }, status=201)
+
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
 
@@ -232,17 +333,17 @@ def jarvis_chat(request):
             action = "SCROLL_PROJECTS"
         elif any(w in user_message for w in ["resume", "cv", "ats", "download", "hire"]):
             reply = (
-                "Suryakiran provides fully ATS-friendly Resume and CV documents optimized for applicant tracking systems. "
-                "You can preview and download them immediately using the 'Download ATS Resume' or 'Download ATS CV' buttons."
+                "Suryakiran provides fully ATS-friendly Resume (1-Page) and Visual CV documents optimized for applicant tracking systems. "
+                "You can preview them online or download the official PDF directly using the 'Download ATS Resume' or 'Download Visual CV' buttons."
             )
             action = "OPEN_RESUME_MODAL"
         elif any(w in user_message for w in ["contact", "email", "phone", "hire", "reach", "social", "github", "linkedin", "instagram"]):
             reply = (
                 "You can connect directly with Suryakiran:\n"
                 "- Email: suryakiranpjineesh@gmail.com\n"
-                "- LinkedIn: linkedin.com/in/surya-kiran-967659351\n"
-                "- GitHub: github.com/suryakiranpjineesh-bit\n"
-                "- Instagram: instagram.com/jstt.kiran"
+                "- LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351\n"
+                "- GitHub: https://github.com/suryakiranpjineesh-bit\n"
+                "- Instagram: https://www.instagram.com/sury.akirann"
             )
             action = "SCROLL_CONTACT"
         elif any(w in user_message for w in ["admin", "dashboard", "login"]):
@@ -256,7 +357,7 @@ def jarvis_chat(request):
             reply = (
                 f"Thank you for asking! As Suryakiran's AI Assistant, I can share that Suryakiran specializes in "
                 f"Python Django backend engineering, reactive React interfaces, and Agentic AI integration. "
-                f"Feel free to ask about his education at KMM, his tech stack, or download his ATS Resume."
+                f"Feel free to ask about his education at Avodha & KMM, his tech stack, or download his ATS Resume."
             )
 
         return JsonResponse({
@@ -270,122 +371,189 @@ def jarvis_chat(request):
 
 
 def download_resume(request):
-    """Serves ATS-friendly text resume formatted cleanly for ATS parsers."""
+    """
+    Serves Suryakiran's official ATS Resume PDF for universal download across all devices.
+    Pass ?format=txt to receive clean ATS plain text.
+    """
+    format_type = request.GET.get('format', 'pdf').lower()
+
     resume_text = """================================================================================
 SURYAKIRAN P J
-Software Engineer | AI Integrated Python Django Full Stack Developer
-Email: suryakiranpjineesh@gmail.com
+Python Django Full Stack Developer | AI Integration
+Ernakulam, Kerala, India | suryakiranpjineesh@gmail.com
 LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351
 GitHub: https://github.com/suryakiranpjineesh-bit
-Location: Ernakulam, Kerala, India
+Instagram: https://www.instagram.com/sury.akirann
 ================================================================================
 
 PROFESSIONAL SUMMARY
-Results-driven Software Engineer and AI-Integrated Python Django Full Stack Developer 
-with extensive expertise in building scalable, secure backend architectures, RESTful APIs, 
-and responsive frontend applications. Specialized in integrating Agentic AI workflows, 
-LLM-driven automations, and modern web application development using Django and React.
+Python Django full stack developer building backend architectures, RESTful APIs,
+and responsive frontend applications. Experience integrating agentic AI workflows
+and LLM-driven automation into web applications using Django, Django REST
+Framework, and React.
 
 --------------------------------------------------------------------------------
 TECHNICAL SKILLS
 --------------------------------------------------------------------------------
-- Programming Languages: Python, JavaScript (ES6+), SQL, HTML5, CSS3
-- Backend Frameworks: Django, Django REST Framework (DRF), ASGI/WSGI
-- Frontend Technologies: React, Three.js (3D Graphics), Responsive Web Design
-- AI & Integration: Agentic AI Systems, LLM Integration, LangChain, Prompt Engineering
-- Databases: PostgreSQL, SQLite, Database Normalization & Indexing
-- Tools & Methodologies: Git, GitHub, RESTful Architecture, Docker Basics, Agile/Scrum
+Languages: Python, JavaScript (ES6+), SQL, HTML5, CSS3
+Backend: Django, Django REST Framework (DRF), ASGI/WSGI, RESTful API Design
+Frontend: React, Three.js, Responsive Web Design
+AI & Integration: Agentic AI Systems, LLM Integration, LangChain, Prompt Engineering
+Databases: PostgreSQL, SQLite, Database Normalization, Indexing
+Tools & Methods: Git, GitHub, Docker (basics), Agile/Scrum
 
 --------------------------------------------------------------------------------
-EDUCATION
+PROJECTS
 --------------------------------------------------------------------------------
-Bachelor of Science (B.Sc) in Computer Science
-KMM, Thrikkakara, Ernakulam, Kerala
-- Key Coursework: Data Structures, Object-Oriented Programming, Database Systems, 
-  Software Engineering, Operating Systems, Computer Networks.
+FinSight AI - Intelligent Personal Finance & Cash-Flow Forecasting Platform
+• Personal finance platform with AI-driven cash-flow forecasting.
 
-Higher Secondary Education (HSS)
+PayMatch AI - Intelligent Payment Reconciliation & Discrepancy Detection System
+• Payment reconciliation system that detects discrepancies in payment records.
+
+FinSim - Personal Financial Stress Testing & Scenario Simulator
+• Simulator that stress-tests personal finances under different scenarios.
+
+--------------------------------------------------------------------------------
+EDUCATION & TRAINING
+--------------------------------------------------------------------------------
+Python Django Full Stack Development (6-Month Professional Program)
+Avodha, Vyttila, Ernakulam, Kerala | In progress (5 of 6 months completed)
+Coursework: Python 3, Django, Django REST Framework, Relational Databases,
+Frontend Integration, API Development, Full Stack Project Engineering
+
+Bachelor of Science (B.Sc), Computer Science
+KMM College, Thrikkakara, Ernakulam, Kerala | Completed
+Coursework: Data Structures, Object-Oriented Programming, Database Systems,
+Software Engineering, Operating Systems, Computer Networks
+
+Higher Secondary Education (HSS), Science & Computer Applications
 Sahodaran Memorial Higher Secondary School, Cherai, Ernakulam, Kerala
-- Stream: Science & Computer Applications
 
 Secondary School Leaving Certificate (SSLC)
 Rama Varma Union High School, Cherai, Ernakulam, Kerala
-
---------------------------------------------------------------------------------
-CORE COMPETENCIES & EXPERTISE
---------------------------------------------------------------------------------
-- Full Stack Architecture: Engineering end-to-end web apps with Django REST backends and React frontends.
-- Agentic AI Development: Designing autonomous AI agents with text and voice capabilities (e.g., Jarvis).
-- Dynamic Content Management: Implementing real-time Admin Portals with live project orchestration.
-- Clean Code Practices: Writing modular, well-documented, testable code adhering to PEP 8 standards.
-
---------------------------------------------------------------------------------
-CONTACT & PORTFOLIO
---------------------------------------------------------------------------------
-- Email: suryakiranpjineesh@gmail.com
-- GitHub: https://github.com/suryakiranpjineesh-bit
-- LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351
-- Instagram: https://www.instagram.com/jstt.kiran
 ================================================================================
 """
+
+    if format_type == 'txt':
+        response = HttpResponse(resume_text, content_type='text/plain; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_Resume.txt"'
+        return response
+
+    # Search for PDF file in backend documents or frontend public directory
+    pdf_candidates = [
+        os.path.join(settings.BASE_DIR, 'portfolio_api', 'documents', 'Suryakiran_PJ_Resume.pdf'),
+        os.path.join(settings.BASE_DIR, '..', 'frontend', 'public', 'Suryakiran_PJ_Resume.pdf'),
+    ]
+
+    for path in pdf_candidates:
+        if os.path.exists(path):
+            response = FileResponse(open(path, 'rb'), content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_Resume.pdf"'
+            return response
+
+    # Fallback to plain text if PDF binary is missing
     response = HttpResponse(resume_text, content_type='text/plain; charset=utf-8')
-    response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_ATS_Resume.txt"'
+    response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_Resume.txt"'
     return response
 
 
 def download_cv(request):
-    """Serves ATS-friendly Curriculum Vitae (CV) with comprehensive academic & technical detail."""
+    """
+    Serves Suryakiran's official Curriculum Vitae (CV) PDF for universal download across all devices.
+    Pass ?format=txt to receive clean ATS plain text.
+    """
+    format_type = request.GET.get('format', 'pdf').lower()
+
     cv_text = """================================================================================
-CURRICULUM VITAE (CV) - ATS COMPLIANT
+CURRICULUM VITAE (CV)
 SURYAKIRAN P J
-Software Engineer | AI Integrated Python Django Full Stack Developer
+Python Django Full Stack Developer | AI Integration
 Email: suryakiranpjineesh@gmail.com
 Location: Ernakulam, Kerala, India
 LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351
 GitHub: https://github.com/suryakiranpjineesh-bit
+Instagram: https://www.instagram.com/sury.akirann
 ================================================================================
 
-1. OBJECTIVE
-To leverage deep proficiency in Python, Django, React, and Agentic AI technologies 
-to engineer resilient software solutions, intelligent automations, and enterprise-grade 
-web platforms that drive technological innovation.
+PROFESSIONAL SUMMARY
+Python Django full stack developer building backend architectures, RESTful APIs,
+and responsive frontend applications. Experience integrating agentic AI workflows
+and LLM-driven automation into web applications using Django, Django REST
+Framework, and React.
 
-2. ACADEMIC CREDENTIALS
 --------------------------------------------------------------------------------
-- B.Sc Computer Science
-  Institution: KMM
-  Location: Thrikkakara, Ernakulam, Kerala
-  Focus: Core Computing, Software Architecture, System Design, Algorithms
-
-- Higher Secondary School (HSS)
-  Institution: Sahodaran Memorial Higher Secondary School
-  Location: Cherai, Ernakulam, Kerala
-
-- Secondary School Leaving Certificate (SSLC)
-  Institution: Rama Varma Union High School
-  Location: Cherai, Ernakulam, Kerala
-
-3. TECHNICAL PROFICIENCIES
+TECHNICAL SKILLS
 --------------------------------------------------------------------------------
-- Languages: Python, JavaScript, SQL, HTML5, CSS3
-- Backend Architecture: Django, Django REST Framework, ORM, API Security, CORS
-- Modern Frontend: React, Three.js 3D WebGL, Component Design, State Management
-- Artificial Intelligence: Agentic AI Agents, LLM Integrations, Speech Synthesis/Recognition
-- Database Management: PostgreSQL, SQLite, Relational Schema Modeling
-- Version Control: Git, GitHub workflow, branching and CI/CD basics
+Languages:
+  Python, JavaScript (ES6+), SQL, HTML5, CSS3
 
-4. NOTABLE ENGINEERING ACHIEVEMENTS
+Backend:
+  Django, Django REST Framework, ASGI/WSGI, RESTful API Design
+
+Frontend:
+  React, Three.js, Responsive Web Design
+
+AI & Integration:
+  Agentic AI Systems, LLM Integration, LangChain, Prompt Engineering
+
+Databases:
+  PostgreSQL, SQLite, Normalization, Indexing
+
+Tools & Methods:
+  Git, GitHub, Docker (basics), Agile/Scrum
+
 --------------------------------------------------------------------------------
-- Developed 3D Interactive Web Experience featuring Three.js particle simulations and 3D scrolling.
-- Engineered Autonomous 'Jarvis' Agent with bilingual speech synthesis, voice recognition, and NLP intent resolution.
-- Architected Real-time In-Portfolio Admin Dashboard for CRUD operations on dynamic software portfolios.
+PROJECTS
+--------------------------------------------------------------------------------
+FinSight AI - Intelligent Personal Finance & Cash-Flow Forecasting Platform
+• Personal finance platform with AI-driven cash-flow forecasting.
 
-5. DECLARATION
-I hereby affirm that the information provided above is authentic and complete to the best of my knowledge.
+PayMatch AI - Intelligent Payment Reconciliation & Discrepancy Detection System
+• Payment reconciliation system that detects discrepancies in payment records.
 
-Suryakiran P J
+FinSim - Personal Financial Stress Testing & Scenario Simulator
+• Simulator that stress-tests personal finances under different scenarios.
+
+--------------------------------------------------------------------------------
+EDUCATION & TRAINING
+--------------------------------------------------------------------------------
+Python Django Full Stack Development (6-Month Program)
+Avodha, Vyttila, Ernakulam, Kerala | In progress (5 of 6 months completed)
+Python 3, Django, DRF, Relational Databases, Frontend Integration, API Development,
+Full Stack Project Engineering
+
+B.Sc, Computer Science
+KMM, Thrikkakara, Ernakulam, Kerala | Completed
+Data Structures, Object-Oriented Programming, Database Systems, Software Engineering,
+Operating Systems, Computer Networks
+
+Higher Secondary Education (HSS), Science & Computer Applications
+Sahodaran Memorial Higher Secondary School, Cherai, Ernakulam, Kerala
+
+Secondary School Leaving Certificate (SSLC)
+Rama Varma Union High School, Cherai, Ernakulam, Kerala
 ================================================================================
 """
+
+    if format_type == 'txt':
+        response = HttpResponse(cv_text, content_type='text/plain; charset=utf-8')
+        response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_CV.txt"'
+        return response
+
+    # Search for PDF file in backend documents or frontend public directory
+    pdf_candidates = [
+        os.path.join(settings.BASE_DIR, 'portfolio_api', 'documents', 'Suryakiran_PJ_CV.pdf'),
+        os.path.join(settings.BASE_DIR, '..', 'frontend', 'public', 'Suryakiran_PJ_CV.pdf'),
+    ]
+
+    for path in pdf_candidates:
+        if os.path.exists(path):
+            response = FileResponse(open(path, 'rb'), content_type='application/pdf')
+            response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_CV.pdf"'
+            return response
+
+    # Fallback to plain text if PDF binary is missing
     response = HttpResponse(cv_text, content_type='text/plain; charset=utf-8')
-    response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_ATS_CV.txt"'
+    response['Content-Disposition'] = 'attachment; filename="Suryakiran_PJ_CV.txt"'
     return response

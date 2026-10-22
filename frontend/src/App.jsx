@@ -10,8 +10,7 @@ import Footer from './components/Footer';
 import AdminDashboard from './components/AdminDashboard';
 import ResumeModal from './components/ResumeModal';
 import JarvisAssistant from './components/JarvisAssistant';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from './config/api';
 
 export default function App() {
   const [projects, setProjects] = useState([]);

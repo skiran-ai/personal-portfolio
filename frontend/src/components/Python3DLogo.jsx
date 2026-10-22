@@ -1,10 +1,26 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 export default function Python3DLogo() {
   const mountRef = useRef(null);
+  const [hasWebGL, setHasWebGL] = useState(true);
 
   useEffect(() => {
+    // WebGL support verification
+    const isWebGLSupported = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      } catch (e) {
+        return false;
+      }
+    };
+
+    if (!isWebGLSupported()) {
+      setHasWebGL(false);
+      return;
+    }
+
     const mount = mountRef.current;
     if (!mount) return;
 
@@ -15,15 +31,22 @@ export default function Python3DLogo() {
     const width = mount.clientWidth || 220;
     const height = mount.clientHeight || 220;
 
-    // Scene, Camera, Renderer
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'default' });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      mount.appendChild(renderer.domElement);
+    } catch (err) {
+      console.warn("WebGL not supported for Python 3D Logo, rendering vector fallback:", err);
+      setHasWebGL(false);
+      return;
+    }
+
+    // Scene, Camera
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.z = 7.5;
-
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    mount.appendChild(renderer.domElement);
 
     // Group for the entire Python 3D emblem
     const pythonGroup = new THREE.Group();
@@ -31,7 +54,6 @@ export default function Python3DLogo() {
     // Helper to create snake shape
     const createSnakeShape = () => {
       const s = new THREE.Shape();
-      // Outer contour of one Python snake half
       s.moveTo(-0.2, 0.2);
       s.lineTo(-0.2, 1.2);
       s.quadraticCurveTo(-0.2, 1.8, 0.4, 1.8);
@@ -124,7 +146,7 @@ export default function Python3DLogo() {
     pythonGroup.add(orbitRing2);
 
     // Floating particles around Python symbol
-    const pCount = 45;
+    const pCount = 35;
     const pGeo = new THREE.BufferGeometry();
     const pPositions = new Float32Array(pCount * 3);
     for (let i = 0; i < pCount; i++) {
@@ -192,11 +214,9 @@ export default function Python3DLogo() {
       animationId = requestAnimationFrame(animate);
       const elapsed = (performance.now() - startTime) * 0.001;
 
-      // Smooth mouse lerp
       pythonGroup.rotation.y += (targetRotY - pythonGroup.rotation.y) * 0.08;
       pythonGroup.rotation.x += (targetRotX - pythonGroup.rotation.x) * 0.08;
 
-      // Continuous 3D rotation & hover levitation
       blueSnake.position.y = 0.25 + Math.sin(elapsed * 2) * 0.04;
       yellowSnake.position.y = -0.25 - Math.sin(elapsed * 2) * 0.04;
 
@@ -204,7 +224,6 @@ export default function Python3DLogo() {
       orbitRing2.rotation.x = -elapsed * 0.5;
       pCloud.rotation.y = elapsed * 0.2;
 
-      // Subtle base rotation
       pythonGroup.rotation.y += 0.008;
 
       renderer.render(scene, camera);
@@ -249,16 +268,85 @@ export default function Python3DLogo() {
         justifyContent: 'center'
       }}
     >
-      <div
-        ref={mountRef}
-        style={{
-          width: '200px',
-          height: '200px',
-          cursor: 'grab',
-          position: 'relative'
-        }}
-        title="Interactive 3D Python Core - Drag or hover to rotate"
-      />
+      {hasWebGL ? (
+        <div
+          ref={mountRef}
+          style={{
+            width: '200px',
+            height: '200px',
+            cursor: 'grab',
+            position: 'relative'
+          }}
+          title="Interactive 3D Python Core - Drag or hover to rotate"
+        />
+      ) : (
+        /* Fallback: Ultra-crisp glowing vector emblem for Opera Mini & non-WebGL browsers */
+        <div
+          style={{
+            width: '200px',
+            height: '200px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            animation: 'floatAnimation 5s ease-in-out infinite'
+          }}
+          title="Python Core Emblem"
+        >
+          {/* Glowing Aura Rings */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '180px',
+              height: '180px',
+              borderRadius: '50%',
+              border: '2px dashed rgba(0, 242, 254, 0.4)',
+              animation: 'spin 20s linear infinite'
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              width: '150px',
+              height: '150px',
+              borderRadius: '50%',
+              border: '1px solid rgba(245, 158, 11, 0.35)'
+            }}
+          />
+          {/* Python SVG Symbol */}
+          <svg width="110" height="110" viewBox="0 0 128 128" fill="none">
+            <defs>
+              <linearGradient id="pyBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#38bdf8" />
+                <stop offset="100%" stopColor="#0284c7" />
+              </linearGradient>
+              <linearGradient id="pyYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#fbbf24" />
+                <stop offset="100%" stopColor="#d97706" />
+              </linearGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            {/* Blue Snake */}
+            <path
+              d="M63.5 12c-27.4 0-25.7 11.9-25.7 11.9l.03 12.3h26.2v3.7H27.5C15.6 39.9 5 53.6 5 66.8c0 14.8 10.4 24.2 24.2 24.2h8.2v-11.4c0-13.8 11.9-13.8 11.9-13.8h26.1c11.4 0 11.4-11 11.4-11V23.9c0-11.9-11.4-11.9-23.3-11.9zm-13.7 7.4c2.5 0 4.5 2 4.5 4.5s-2 4.5-4.5 4.5-4.5-2-4.5-4.5 2-4.5 4.5-4.5z"
+              fill="url(#pyBlue)"
+              filter="url(#glow)"
+            />
+            {/* Yellow Snake */}
+            <path
+              d="M64.5 116c27.4 0 25.7-11.9 25.7-11.9l-.03-12.3H64v-3.7h36.5c11.9 0 22.5-13.7 22.5-26.9 0-14.8-10.4-24.2-24.2-24.2h-8.2v11.4c0 13.8-11.9 13.8-11.9 13.8H52.6c-11.4 0-11.4 11-11.4 11v30.9c0 11.9 11.4 11.9 23.3 11.9zm13.7-7.4c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5-2 4.5-4.5 4.5z"
+              fill="url(#pyYellow)"
+              filter="url(#glow)"
+            />
+          </svg>
+        </div>
+      )}
       <div
         style={{
           display: 'inline-flex',

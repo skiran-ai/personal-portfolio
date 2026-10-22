@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Lock, Key, Plus, Trash2, Mail, Bot, Check, AlertCircle, RefreshCw, Layers, Star, ExternalLink, Terminal } from 'lucide-react';
 import { GithubIcon } from './SocialIcons';
 import confetti from 'canvas-confetti';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from '../config/api';
 
 export default function AdminDashboard({ isOpen, onClose, onProjectCreated, projects, onDeleteProject, initialTab = 'add' }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -95,11 +94,15 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
       const data = await res.json();
 
       if (data.status === 'success') {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
+        try {
+          confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        } catch (e) {
+          // Safe fallback for canvas-restricted environments
+        }
 
         setSubmitMessage({ type: 'success', text: `Project "${newProject.title}" published live to portfolio!` });
         setNewProject({

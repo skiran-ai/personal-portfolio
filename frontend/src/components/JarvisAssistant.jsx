@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bot, Mic, MicOff, Send, X, Volume2, VolumeX, Sparkles, MessageSquare, Play, RefreshCw, ChevronDown } from 'lucide-react';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from '../config/api';
 
 export default function JarvisAssistant({
   isOpen,

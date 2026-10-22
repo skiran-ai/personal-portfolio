@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle, MapPin, Sparkles } from 'lucide-react';
+import { Mail, Send, CheckCircle2, AlertCircle, MapPin, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './SocialIcons';
 import confetti from 'canvas-confetti';
 import useScrollReveal from '../hooks/useScrollReveal';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from '../config/api';
 
 export default function Contact() {
   const [revealRef, isVisible] = useScrollReveal();
@@ -16,6 +15,16 @@ export default function Contact() {
   });
   const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: string }
   const [loading, setLoading] = useState(false);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [lastSent, setLastSent] = useState(null);
+
+  const handleCopyEmail = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText('suryakiranpjineesh@gmail.com');
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2000);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,21 +45,26 @@ export default function Contact() {
       const data = await res.json();
 
       if (data.status === 'success') {
-        confetti({
-          particleCount: 70,
-          spread: 60,
-          origin: { y: 0.8 }
-        });
+        try {
+          confetti({
+            particleCount: 70,
+            spread: 60,
+            origin: { y: 0.8 }
+          });
+        } catch (e) {
+          // Safe fallback for canvas-restricted browsers
+        }
+        setLastSent({ ...formData });
         setStatus({
           type: 'success',
-          message: 'Thank you! Your message has been dispatched to Suryakiran and logged into the Admin Inbox.'
+          message: data.message || 'Your message has been received! It was sent to Suryakiran (suryakiranpjineesh@gmail.com) and logged in the Admin Inbox.'
         });
         setFormData({ name: '', email: '', subject: '', message: '' });
       } else {
         setStatus({ type: 'error', message: data.message || 'Failed to deliver message.' });
       }
     } catch (err) {
-      setStatus({ type: 'error', message: 'Network error connecting to Django backend server.' });
+      setStatus({ type: 'error', message: 'Could not reach backend API. You can also send directly via Gmail below.' });
     } finally {
       setLoading(false);
     }
@@ -105,31 +119,83 @@ export default function Contact() {
               </h3>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <a
-                  href="mailto:suryakiranpjineesh@gmail.com"
+                <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: '14px',
-                    color: 'var(--text-primary)',
-                    textDecoration: 'none',
-                    padding: '12px',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    padding: '14px',
                     borderRadius: '12px',
                     background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--border-subtle)',
-                    transition: 'all 0.2s'
+                    border: '1px solid var(--border-subtle)'
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--cyan)'; e.currentTarget.style.color = 'var(--cyan)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(0, 242, 254, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--cyan)' }}>
-                    <Mail size={18} />
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <a
+                      href="mailto:suryakiranpjineesh@gmail.com"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '12px',
+                        color: 'var(--text-primary)',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(0, 242, 254, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--cyan)' }}>
+                        <Mail size={18} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Direct Gmail</div>
+                        <div style={{ fontSize: '0.92rem', fontWeight: '600', color: '#fff', wordBreak: 'break-all' }}>suryakiranpjineesh@gmail.com</div>
+                      </div>
+                    </a>
+
+                    <button
+                      onClick={handleCopyEmail}
+                      type="button"
+                      title="Copy email to clipboard"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        background: copiedEmail ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                        border: copiedEmail ? '1px solid #10b981' : '1px solid var(--border-subtle)',
+                        color: copiedEmail ? '#34d399' : 'var(--text-secondary)',
+                        fontSize: '0.78rem',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {copiedEmail ? <Check size={14} /> : <Copy size={14} />}
+                      <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
+                    </button>
                   </div>
-                  <div>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Email</div>
-                    <div style={{ fontSize: '0.92rem', fontWeight: '600' }}>suryakiranpjineesh@gmail.com</div>
+
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '2px' }}>
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=suryakiranpjineesh@gmail.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        fontSize: '0.78rem',
+                        color: 'var(--cyan)',
+                        textDecoration: 'none',
+                        background: 'rgba(0, 242, 254, 0.08)',
+                        border: '1px solid rgba(0, 242, 254, 0.25)',
+                        padding: '5px 12px',
+                        borderRadius: '6px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      <ExternalLink size={12} />
+                      <span>Launch in Gmail Web</span>
+                    </a>
                   </div>
-                </a>
+                </div>
 
                 <div
                   style={{
@@ -207,7 +273,7 @@ export default function Contact() {
                   </a>
 
                   <a
-                    href="https://www.instagram.com/jstt.kiran?igsh=aG83M255aG1wZTho"
+                    href="https://www.instagram.com/sury.akirann"
                     target="_blank"
                     rel="noreferrer"
                     style={{
@@ -301,18 +367,46 @@ export default function Contact() {
 
               {status && (
                 <div style={{
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  padding: '14px 18px',
+                  borderRadius: '12px',
                   background: status.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
                   border: status.type === 'success' ? '1px solid #10b981' : '1px solid #ef4444',
                   color: status.type === 'success' ? '#34d399' : '#f87171',
                   fontSize: '0.88rem',
                   display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px'
+                  flexDirection: 'column',
+                  gap: '10px'
                 }}>
-                  {status.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
-                  <span>{status.message}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {status.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+                    <span>{status.message}</span>
+                  </div>
+
+                  {lastSent && (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', paddingTop: '6px', borderTop: '1px solid rgba(16, 185, 129, 0.25)' }}>
+                      <a
+                        href={`https://mail.google.com/mail/?view=cm&fs=1&to=suryakiranpjineesh@gmail.com&su=${encodeURIComponent(lastSent.subject || 'Portfolio Inquiry')}&body=${encodeURIComponent(lastSent.message)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          background: 'rgba(0, 242, 254, 0.15)',
+                          border: '1px solid var(--cyan)',
+                          color: 'var(--cyan)',
+                          fontSize: '0.8rem',
+                          fontWeight: '600',
+                          textDecoration: 'none'
+                        }}
+                      >
+                        <ExternalLink size={14} />
+                        <span>Open Pre-filled in Gmail Web</span>
+                      </a>
+                    </div>
+                  )}
                 </div>
               )}
 
