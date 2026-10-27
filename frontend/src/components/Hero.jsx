@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Bot, ArrowRight, Download, Mail, Sparkles, ShieldCheck, Terminal, Layers, ChevronDown } from 'lucide-react';
+import { Volume2, VolumeX, Bot, ArrowRight, Download, Mail, Sparkles, Terminal, ChevronDown } from 'lucide-react';
 import { GithubIcon, LinkedinIcon, InstagramIcon } from './SocialIcons';
 import Python3DLogo from './Python3DLogo';
 
@@ -39,116 +39,131 @@ export default function Hero({
       }}
     >
       <div style={{ maxWidth: '1240px', width: '100%', margin: '0 auto' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
-          alignItems: 'center',
-          gap: 'clamp(32px, 5vw, 60px)'
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))',
+            alignItems: 'center',
+            gap: 'clamp(36px, 5vw, 64px)'
+          }}
+        >
           {/* Left Column: Text & Hero Action */}
           <div>
             {/* Status Tag */}
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '24px',
-              background: 'rgba(0, 242, 254, 0.08)',
-              border: '1px solid rgba(0, 242, 254, 0.25)',
-              marginBottom: '20px'
-            }}>
+            <div
+              className="glass-pill"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '6px 16px',
+                border: '1px solid rgba(0, 242, 254, 0.3)',
+                marginBottom: '20px',
+                background: 'rgba(0, 242, 254, 0.08)'
+              }}
+            >
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 10px var(--cyan)' }}></span>
-              <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--cyan)', letterSpacing: '0.04em' }}>
-                AI INTEGRATED FULL STACK ENGINEER
+              <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--cyan)', letterSpacing: '0.05em' }}>
+                AI-INTEGRATED FULL STACK DEVELOPER
               </span>
             </div>
 
             {/* Name */}
-            <h1 style={{
-              fontSize: 'clamp(2.5rem, 5vw, 4.2rem)',
-              fontWeight: '800',
-              lineHeight: '1.1',
-              marginBottom: '16px',
-              color: '#ffffff'
-            }}>
+            <h1
+              style={{
+                fontSize: 'clamp(2.5rem, 5.5vw, 4.2rem)',
+                fontWeight: '800',
+                lineHeight: '1.1',
+                marginBottom: '16px',
+                color: '#ffffff'
+              }}
+            >
               Hi, I'm <br />
               <span className="gradient-text-cyan">Suryakiran P J</span>
             </h1>
 
             {/* Role & Bio */}
-            <p style={{
-              fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
-              fontWeight: '600',
-              color: '#94a3b8',
-              marginBottom: '16px',
-              lineHeight: '1.4'
-            }}>
+            <p
+              style={{
+                fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+                fontWeight: '600',
+                color: '#94a3b8',
+                marginBottom: '16px',
+                lineHeight: '1.4'
+              }}
+            >
               Software Engineer{' '}
               <span style={{ color: 'var(--cyan)' }}>
-                (AI Integrated Python Django Full Stack Developer)
+                (AI-Integrated Python Django Full Stack Developer)
               </span>
             </p>
 
-            <p style={{
-              fontSize: '1rem',
-              color: 'var(--text-secondary)',
-              lineHeight: '1.7',
-              maxWidth: '540px',
-              marginBottom: '28px'
-            }}>
+            <p
+              style={{
+                fontSize: '1rem',
+                color: 'var(--text-secondary)',
+                lineHeight: '1.7',
+                maxWidth: '560px',
+                marginBottom: '28px'
+              }}
+            >
               Architecting production-ready backend systems with Python & Django, crafting reactive
-              3D interfaces, and embedding autonomous Agentic AI to supercharge digital experiences.
+              modern user interfaces, and embedding autonomous Agentic AI to supercharge digital experiences.
             </p>
 
             {/* Jarvis Hero Voice Controller */}
-            <div style={{
-              background: 'rgba(15, 23, 42, 0.8)',
-              border: '1px solid rgba(0, 242, 254, 0.25)',
-              borderRadius: '16px',
-              padding: '12px clamp(12px, 3vw, 20px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '12px',
-              marginBottom: '32px',
-              boxShadow: '0 8px 30px rgba(0, 242, 254, 0.08)'
-            }}>
+            <div
+              className="liquid-glass liquid-glass-border"
+              style={{
+                borderRadius: '18px',
+                padding: '14px clamp(12px, 3vw, 20px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+                marginBottom: '32px'
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <div style={{
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #a855f7 0%, #00f2fe 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#fff',
-                  boxShadow: '0 0 15px rgba(168, 85, 247, 0.5)'
-                }}>
-                  <Bot size={20} />
+                <div
+                  style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #a855f7 0%, #00f2fe 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    boxShadow: '0 0 16px rgba(168, 85, 247, 0.5)',
+                    flexShrink: 0
+                  }}
+                >
+                  <Bot size={22} />
                 </div>
                 <div>
                   <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     Jarvis AI Voice Assistant
                     {isJarvisSpeaking ? (
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                        fontSize: '0.75rem',
-                        color: 'var(--cyan)',
-                        background: 'rgba(0, 242, 254, 0.12)',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        border: '1px solid rgba(0, 242, 254, 0.3)'
-                      }}>
+                      <span
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          fontSize: '0.72rem',
+                          color: 'var(--cyan)',
+                          background: 'rgba(0, 242, 254, 0.12)',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          border: '1px solid rgba(0, 242, 254, 0.3)'
+                        }}
+                      >
                         <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--cyan)', animation: 'pulse 1s infinite' }}></span>
                         Speaking Hero Section
                       </span>
                     ) : (
-                      <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>• Auto-Plays on Load</span>
+                      <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>• Auto-Plays on Load</span>
                     )}
                   </div>
                   <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
@@ -368,19 +383,18 @@ export default function Hero({
 
                 {/* Cyber HUD Badge Overlay */}
                 <div
+                  className="liquid-glass"
                   style={{
                     position: 'absolute',
                     bottom: '16px',
                     left: '16px',
                     right: '16px',
                     padding: '12px 16px',
-                    background: 'rgba(7, 9, 14, 0.88)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(0, 242, 254, 0.3)',
                     borderRadius: '14px',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
+                    border: '1px solid rgba(0, 242, 254, 0.35)'
                   }}
                 >
                   <div>
@@ -397,15 +411,12 @@ export default function Hero({
 
             {/* 3D Python Symbol Animation Showcase Card */}
             <div
+              className="liquid-glass liquid-glass-border"
               style={{
                 width: '100%',
                 maxWidth: '320px',
-                background: 'linear-gradient(135deg, rgba(14, 20, 36, 0.88) 0%, rgba(7, 9, 14, 0.95) 100%)',
-                backdropFilter: 'blur(16px)',
-                border: '1px solid rgba(0, 242, 254, 0.35)',
                 borderRadius: '20px',
                 padding: '12px 16px',
-                boxShadow: '0 15px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 242, 254, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',

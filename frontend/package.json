@@ -10,10 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
     "canvas-confetti": "^1.9.4",
+    "framer-motion": "^14.6.0",
+    "hls.js": "^1.7.3",
     "lucide-react": "^1.49.0",
+    "motion": "^14.6.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
     "three": "^0.186.1"
   },
   "devDependencies": {

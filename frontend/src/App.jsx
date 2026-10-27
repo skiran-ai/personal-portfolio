@@ -69,12 +69,11 @@ export default function App() {
     const text = textToSpeak || getHeroIntroSpeech();
 
     try {
-      // If already speaking and not forcing restart, do not interrupt
       if (!forceRestart && isJarvisSpeaking) {
         return;
       }
 
-      window.speechSynthesis.cancel(); // Reset any stalled speech queue
+      window.speechSynthesis.cancel();
 
       if (window.speechSynthesis.paused) {
         window.speechSynthesis.resume();
@@ -84,7 +83,6 @@ export default function App() {
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
 
-      // Select high quality English voice
       const assignVoice = () => {
         const voices = window.speechSynthesis.getVoices();
         if (voices && voices.length > 0) {
@@ -118,18 +116,15 @@ export default function App() {
         activeUtteranceRef.current = null;
         window.__jarvisUtterance = null;
         if (e.error === 'not-allowed' || e.error === 'interrupted') {
-          // If browser blocked speech prior to user interaction, allow first interaction to trigger
           hasAutoSpokenRef.current = false;
         }
       };
 
-      // Retain strong reference on ref and window so Chromium V8 does not GC mid-speech
       activeUtteranceRef.current = utterance;
       window.__jarvisUtterance = utterance;
 
       window.speechSynthesis.speak(utterance);
 
-      // In case Chromium starts paused, trigger resume immediately
       if (window.speechSynthesis.paused) {
         window.speechSynthesis.resume();
       }
@@ -144,7 +139,7 @@ export default function App() {
       window.speechSynthesis.cancel();
     }
     setIsJarvisSpeaking(false);
-    hasAutoSpokenRef.current = true; // User intentionally stopped, do not auto-restart
+    hasAutoSpokenRef.current = true;
   };
 
   // Auto-play Jarvis hero speech ONE TIME whenever portfolio opens
@@ -161,12 +156,10 @@ export default function App() {
       }
     };
 
-    // 1. Immediate attempt on page open (250ms)
     const autoTimer = setTimeout(() => {
       triggerAutoSpeech();
     }, 250);
 
-    // 2. Also trigger when voices finish loading asynchronously
     const handleVoicesChanged = () => {
       if (!hasAutoSpokenRef.current) {
         triggerAutoSpeech();
@@ -176,8 +169,6 @@ export default function App() {
       window.speechSynthesis.addEventListener('voiceschanged', handleVoicesChanged);
     }
 
-    // 3. User interaction fallback (strictly ONE-TIME click, tap, or keypress anywhere on page)
-    // NOTE: 'mousemove' and 'scroll' are explicitly omitted so cursor movement never cancels or stutters speech!
     const handleFirstUserInteraction = () => {
       if (!hasAutoSpokenRef.current) {
         triggerAutoSpeech();
@@ -196,7 +187,6 @@ export default function App() {
       window.addEventListener(evt, handleFirstUserInteraction, { passive: true, once: true });
     });
 
-    // 4. Chrome keep-alive: prevent speech from pausing prematurely during long narration
     const keepAlive = setInterval(() => {
       if (typeof window !== 'undefined' && 'speechSynthesis' in window && window.speechSynthesis.speaking) {
         window.speechSynthesis.resume();
