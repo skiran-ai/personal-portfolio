@@ -11,12 +11,13 @@ from .models import Project, ContactMessage
 # Profile Data - Accurate and dynamically accessible
 PROFILE_INFO = {
     "name": "Suryakiran P J",
-    "role": "Python Django Full Stack Developer | AI Integration",
+    "role": "AI-Integrated Full Stack & Forward Deployed Engineer (Python / Django)",
     "email": "suryakiranpjineesh@gmail.com",
+    "phone": "+91 8129867662",
+    "portfolio": "https://skiran.vercel.app",
     "socials": {
         "github": "https://github.com/suryakiranpjineesh-bit",
         "linkedin": "https://www.linkedin.com/in/surya-kiran-967659351",
-        "instagram": "https://www.instagram.com/sury.akirann",
         "email": "mailto:suryakiranpjineesh@gmail.com"
     },
     "education": [
@@ -31,7 +32,7 @@ PROFILE_INFO = {
             "degree": "Bachelor of Science (B.Sc), Computer Science",
             "institution": "KMM College",
             "location": "Thrikkakara, Ernakulam, Kerala",
-            "period": "Completed",
+            "period": "Coursework Completed (2023 – 2026)",
             "highlight": "Coursework: Data Structures, Object-Oriented Programming, Database Systems, Software Engineering, Operating Systems, Computer Networks."
         },
         {
@@ -369,13 +370,14 @@ def jarvis_chat(request):
                 "You can preview them online or download the official PDF directly using the 'Download ATS Resume' or 'Download Visual CV' buttons."
             )
             action = "OPEN_RESUME_MODAL"
-        elif any(w in user_message for w in ["contact", "email", "phone", "hire", "reach", "social", "github", "linkedin", "instagram"]):
+        elif any(w in user_message for w in ["contact", "email", "phone", "hire", "reach", "social", "github", "linkedin"]):
             reply = (
                 "You can connect directly with Suryakiran:\n"
                 "- Email: suryakiranpjineesh@gmail.com\n"
+                "- Phone: +91 8129867662\n"
                 "- LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351\n"
                 "- GitHub: https://github.com/suryakiranpjineesh-bit\n"
-                "- Instagram: https://www.instagram.com/sury.akirann"
+                "- Portfolio: https://skiran.vercel.app"
             )
             action = "SCROLL_CONTACT"
         elif any(w in user_message for w in ["admin", "dashboard", "login"]):
@@ -410,11 +412,10 @@ def download_resume(request):
 
     resume_text = """================================================================================
 SURYAKIRAN P J
-Python Django Full Stack Developer | AI Integration
-Ernakulam, Kerala, India | suryakiranpjineesh@gmail.com
-LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351
-GitHub: https://github.com/suryakiranpjineesh-bit
-Instagram: https://www.instagram.com/sury.akirann
+AI-Integrated Full Stack & Forward Deployed Engineer (Python / Django)
+Ernakulam, Kerala, India | suryakiranpjineesh@gmail.com | +91 8129867662
+LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351 | GitHub: https://github.com/suryakiranpjineesh-bit
+Portfolio: https://skiran.vercel.app
 ================================================================================
 
 PROFESSIONAL SUMMARY
@@ -437,13 +438,19 @@ Tools & Methods: Git, GitHub, Docker (basics), Agile/Scrum
 PROJECTS
 --------------------------------------------------------------------------------
 FinSight AI - Intelligent Personal Finance & Cash-Flow Forecasting Platform
-• Personal finance platform with AI-driven cash-flow forecasting.
+• Problem Solved: Eliminates personal liquidity risks and cash-flow volatility by identifying recurring spending leaks and forecasting monthly balance trajectories.
+• Stack Architecture: Engineered high-throughput REST APIs using Python, Django REST Framework, and PostgreSQL with normalized schemas and optimized query indexing.
+• AI/LLM Integration: Integrated LangChain and LLM reasoning pipelines to automatically parse banking statements, classify transactions, and project forward cash-flow scenarios.
 
 PayMatch AI - Intelligent Payment Reconciliation & Discrepancy Detection System
-• Payment reconciliation system that detects discrepancies in payment records.
+• Problem Solved: Resolves multi-gateway payment mismatches, fee anomalies, and missing settlement records across high-volume merchant transaction streams.
+• Stack Architecture: Architected robust backend reconciliation workflows in Python and Django with strict ACID transaction guarantees and batch PostgreSQL processing.
+• AI/LLM Integration: Implemented fuzzy matching agents and LLM-driven discrepancy analyzers to classify anomalies and generate automated audit resolution reports.
 
 FinSim - Personal Financial Stress Testing & Scenario Simulator
-• Simulator that stress-tests personal finances under different scenarios.
+• Problem Solved: Enables users to evaluate financial resilience by simulating real-world shocks like inflation spikes, medical emergencies, and income disruptions.
+• Stack Architecture: Developed deterministic financial simulation algorithms using Python and Django ORM, synchronized with reactive interactive charts in React.
+• AI/LLM Integration: Integrated generative AI scenario modeling agents that evaluate multi-variable macroeconomic conditions and formulate personalized contingency playbooks.
 
 --------------------------------------------------------------------------------
 EDUCATION & TRAINING
@@ -454,7 +461,7 @@ Coursework: Python 3, Django, Django REST Framework, Relational Databases,
 Frontend Integration, API Development, Full Stack Project Engineering
 
 Bachelor of Science (B.Sc), Computer Science
-KMM College, Thrikkakara, Ernakulam, Kerala | Completed
+KMM College, Thrikkakara, Ernakulam, Kerala | Coursework Completed (2023 – 2026)
 Coursework: Data Structures, Object-Oriented Programming, Database Systems,
 Software Engineering, Operating Systems, Computer Networks
 
@@ -499,12 +506,13 @@ def download_cv(request):
     cv_text = """================================================================================
 CURRICULUM VITAE (CV)
 SURYAKIRAN P J
-Python Django Full Stack Developer | AI Integration
+AI-Integrated Full Stack & Forward Deployed Engineer (Python / Django)
 Email: suryakiranpjineesh@gmail.com
+Phone: +91 8129867662
 Location: Ernakulam, Kerala, India
 LinkedIn: https://www.linkedin.com/in/surya-kiran-967659351
 GitHub: https://github.com/suryakiranpjineesh-bit
-Instagram: https://www.instagram.com/sury.akirann
+Portfolio: https://skiran.vercel.app
 ================================================================================
 
 PROFESSIONAL SUMMARY
@@ -537,14 +545,20 @@ Tools & Methods:
 --------------------------------------------------------------------------------
 PROJECTS
 --------------------------------------------------------------------------------
-FinSight AI - Intelligent Personal Finance & Cash-Flow Forecasting Platform
-• Personal finance platform with AI-driven cash-flow forecasting.
+1. FinSight AI - Intelligent Personal Finance & Cash-Flow Forecasting Platform
+   • Problem Solved: Eliminates personal liquidity risks and cash-flow volatility by identifying recurring spending leaks and forecasting monthly balance trajectories.
+   • Stack Architecture: Engineered high-throughput REST APIs using Python, Django REST Framework, and PostgreSQL with normalized schemas and optimized query indexing.
+   • AI/LLM Integration: Integrated LangChain and LLM reasoning pipelines to automatically parse banking statements, classify transactions, and project forward cash-flow scenarios.
 
-PayMatch AI - Intelligent Payment Reconciliation & Discrepancy Detection System
-• Payment reconciliation system that detects discrepancies in payment records.
+2. PayMatch AI - Intelligent Payment Reconciliation & Discrepancy Detection System
+   • Problem Solved: Resolves multi-gateway payment mismatches, fee anomalies, and missing settlement records across high-volume merchant transaction streams.
+   • Stack Architecture: Architected robust backend reconciliation workflows in Python and Django with strict ACID transaction guarantees and batch PostgreSQL processing.
+   • AI/LLM Integration: Implemented fuzzy matching agents and LLM-driven discrepancy analyzers to classify anomalies and generate automated audit resolution reports.
 
-FinSim - Personal Financial Stress Testing & Scenario Simulator
-• Simulator that stress-tests personal finances under different scenarios.
+3. FinSim - Personal Financial Stress Testing & Scenario Simulator
+   • Problem Solved: Enables users to evaluate financial resilience by simulating real-world shocks like inflation spikes, medical emergencies, and income disruptions.
+   • Stack Architecture: Developed deterministic financial simulation algorithms using Python and Django ORM, synchronized with reactive interactive charts in React.
+   • AI/LLM Integration: Integrated generative AI scenario modeling agents that evaluate multi-variable macroeconomic conditions and formulate personalized contingency playbooks.
 
 --------------------------------------------------------------------------------
 EDUCATION & TRAINING
@@ -555,7 +569,7 @@ Python 3, Django, DRF, Relational Databases, Frontend Integration, API Developme
 Full Stack Project Engineering
 
 B.Sc, Computer Science
-KMM, Thrikkakara, Ernakulam, Kerala | Completed
+KMM, Thrikkakara, Ernakulam, Kerala | Coursework Completed (2023 – 2026)
 Data Structures, Object-Oriented Programming, Database Systems, Software Engineering,
 Operating Systems, Computer Networks
 

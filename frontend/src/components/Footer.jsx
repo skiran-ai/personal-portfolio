@@ -1,6 +1,6 @@
 import React from 'react';
-import { Mail, Heart, Sparkles, Terminal } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, InstagramIcon } from './SocialIcons';
+import { Mail, Phone, Heart, Sparkles, Terminal } from 'lucide-react';
+import { GithubIcon, LinkedinIcon } from './SocialIcons';
 
 export default function Footer({ onOpenAdmin, onOpenResume }) {
   return (
@@ -25,7 +25,7 @@ export default function Footer({ onOpenAdmin, onOpenResume }) {
               SURYAKIRAN <span style={{ color: 'var(--cyan)' }}>P J</span>
             </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
-              Software Engineer | AI Integrated Python Django Full Stack Developer
+              AI-Integrated Full Stack &amp; Forward Deployed Engineer (Python / Django)
             </p>
           </div>
 
@@ -56,8 +56,8 @@ export default function Footer({ onOpenAdmin, onOpenResume }) {
             <a href="https://www.linkedin.com/in/surya-kiran-967659351?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }} title="LinkedIn">
               <LinkedinIcon size={18} />
             </a>
-            <a href="https://www.instagram.com/sury.akirann" target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }} title="Instagram">
-              <InstagramIcon size={18} />
+            <a href="tel:8129867662" style={{ color: 'var(--text-secondary)' }} title="Call 8129867662">
+              <Phone size={18} />
             </a>
             <a href="mailto:suryakiranpjineesh@gmail.com" style={{ color: 'var(--text-secondary)' }} title="Email">
               <Mail size={18} />

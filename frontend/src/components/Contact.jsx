@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Send, CheckCircle2, AlertCircle, MapPin, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, InstagramIcon } from './SocialIcons';
+import { Mail, Phone, Send, CheckCircle2, AlertCircle, MapPin, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
+import { GithubIcon, LinkedinIcon } from './SocialIcons';
 import confetti from 'canvas-confetti';
 import useScrollReveal from '../hooks/useScrollReveal';
 import { API_BASE } from '../config/api';
@@ -16,6 +16,7 @@ export default function Contact() {
   const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: string }
   const [loading, setLoading] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
   const [lastSent, setLastSent] = useState(null);
 
   const handleCopyEmail = (e) => {
@@ -24,6 +25,14 @@ export default function Contact() {
     navigator.clipboard.writeText('suryakiranpjineesh@gmail.com');
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
+  };
+
+  const handleCopyPhone = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText('8129867662');
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2000);
   };
 
   const handleSubmit = async (e) => {
@@ -197,6 +206,61 @@ export default function Contact() {
                   </div>
                 </div>
 
+                {/* Phone / Mobile */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '8px',
+                    padding: '12px',
+                    borderRadius: '12px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid var(--border-subtle)'
+                  }}
+                >
+                  <a
+                    href="tel:8129867662"
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      color: 'var(--text-primary)',
+                      textDecoration: 'none'
+                    }}
+                  >
+                    <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(56, 189, 248, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8' }}>
+                      <Phone size={18} />
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Mobile Number</div>
+                      <div style={{ fontSize: '0.92rem', fontWeight: '600', color: '#fff' }}>+91 8129867662</div>
+                    </div>
+                  </a>
+
+                  <button
+                    onClick={handleCopyPhone}
+                    type="button"
+                    title="Copy phone number"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      background: copiedPhone ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                      border: copiedPhone ? '1px solid #10b981' : '1px solid var(--border-subtle)',
+                      color: copiedPhone ? '#34d399' : 'var(--text-secondary)',
+                      fontSize: '0.78rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {copiedPhone ? <Check size={14} /> : <Copy size={14} />}
+                    <span>{copiedPhone ? 'Copied' : 'Copy'}</span>
+                  </button>
+                </div>
+
                 <div
                   style={{
                     display: 'flex',
@@ -270,30 +334,6 @@ export default function Contact() {
                   >
                     <LinkedinIcon size={16} />
                     <span>LinkedIn</span>
-                  </a>
-
-                  <a
-                    href="https://www.instagram.com/sury.akirann"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      flex: 1,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px',
-                      padding: '10px',
-                      borderRadius: '10px',
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid var(--border-subtle)',
-                      color: '#f43f5e',
-                      textDecoration: 'none',
-                      fontSize: '0.85rem',
-                      fontWeight: '500'
-                    }}
-                  >
-                    <InstagramIcon size={16} />
-                    <span>Instagram</span>
                   </a>
                 </div>
               </div>

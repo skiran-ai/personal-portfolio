@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Volume2, VolumeX, Bot, ArrowRight, Download, Mail, Sparkles, Terminal, ChevronDown } from 'lucide-react';
-import { GithubIcon, LinkedinIcon, InstagramIcon } from './SocialIcons';
+import { Volume2, VolumeX, Bot, ArrowRight, Download, Mail, Phone, Sparkles, Terminal, ChevronDown } from 'lucide-react';
+import { GithubIcon, LinkedinIcon } from './SocialIcons';
 import Python3DLogo from './Python3DLogo';
 
 export default function Hero({
@@ -64,7 +64,7 @@ export default function Hero({
             >
               <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--cyan)', boxShadow: '0 0 10px var(--cyan)' }}></span>
               <span style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--cyan)', letterSpacing: '0.05em' }}>
-                AI-INTEGRATED FULL STACK DEVELOPER
+                AI-INTEGRATED FULL STACK &amp; FORWARD DEPLOYED ENGINEER
               </span>
             </div>
 
@@ -85,16 +85,16 @@ export default function Hero({
             {/* Role & Bio */}
             <p
               style={{
-                fontSize: 'clamp(1.1rem, 2vw, 1.3rem)',
+                fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
                 fontWeight: '600',
-                color: '#94a3b8',
+                color: '#e2e8f0',
                 marginBottom: '16px',
                 lineHeight: '1.4'
               }}
             >
-              Software Engineer{' '}
+              AI-Integrated Full Stack &amp; Forward Deployed Engineer{' '}
               <span style={{ color: 'var(--cyan)' }}>
-                (AI-Integrated Python Django Full Stack Developer)
+                (Python / Django)
               </span>
             </p>
 
@@ -275,10 +275,8 @@ export default function Hero({
               </a>
 
               <a
-                href="https://www.instagram.com/sury.akirann"
-                target="_blank"
-                rel="noreferrer"
-                title="Instagram Profile"
+                href="tel:8129867662"
+                title="Call 8129867662"
                 style={{
                   width: '38px',
                   height: '38px',
@@ -291,10 +289,10 @@ export default function Hero({
                   color: 'var(--text-secondary)',
                   transition: 'all 0.2s'
                 }}
-                onMouseEnter={e => { e.currentTarget.style.color = '#f43f5e'; e.currentTarget.style.borderColor = '#f43f5e'; }}
+                onMouseEnter={e => { e.currentTarget.style.color = '#38bdf8'; e.currentTarget.style.borderColor = '#38bdf8'; }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
               >
-                <InstagramIcon size={18} />
+                <Phone size={18} />
               </a>
 
               <a

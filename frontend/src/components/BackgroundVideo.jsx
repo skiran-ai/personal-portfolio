@@ -68,6 +68,7 @@ export default function BackgroundVideo() {
         loop
         playsInline
         className="w-full h-full object-cover opacity-100"
+        style={{ objectPosition: '56.1% center' }}
       />
     </div>
   );

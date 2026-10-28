@@ -41,7 +41,7 @@ export default function App() {
     const greeting = getTimeGreeting();
     return (
       `${greeting}! I am Jarvis, personal AI assistant to Suryakiran P J. ` +
-      `Suryakiran is a Software Engineer and AI-Integrated Python Django Full Stack Developer. ` +
+      `Suryakiran is an AI-Integrated Full Stack & Forward Deployed Engineer specializing in Python and Django. ` +
       `He specializes in architecting high-performance Django backends, reactive modern user interfaces, and autonomous agentic AI integrations. ` +
       `Feel free to explore his coursework, review his skills, download his ATS-friendly resume, or check out his featured projects.`
     );

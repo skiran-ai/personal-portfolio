@@ -22,7 +22,7 @@ export default function AboutEducation() {
       institution: "KMM",
       location: "Thrikkakara, Ernakulam, Kerala",
       type: "Undergraduate Degree",
-      period: "Course Completed",
+      period: "Coursework Completed (2023 – 2026)",
       note: "Coursework completed with specialization in Computer Science fundamentals, Software Architecture, Database Engineering, and Object-Oriented Programming.",
       tag: "Degree",
       accent: "#38bdf8",
