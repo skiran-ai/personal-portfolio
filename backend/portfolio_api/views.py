@@ -290,7 +290,7 @@ def admin_login(request):
         return JsonResponse({
             "status": "error",
             "authenticated": False,
-            "message": "Invalid username or password. Default is admin / surya007."
+            "message": "Invalid username or password. Access restricted."
         }, status=401)
     except Exception as e:
         return JsonResponse({"status": "error", "message": str(e)}, status=400)
@@ -380,9 +380,8 @@ def jarvis_chat(request):
             action = "SCROLL_CONTACT"
         elif any(w in user_message for w in ["admin", "dashboard", "login"]):
             reply = (
-                "The Admin Dashboard is built directly inside this portfolio! "
-                "Click the 'Admin Portal' button in the header or hero to access it. "
-                "Default credentials: username 'admin' and password 'surya007'."
+                "The Admin Dashboard is built directly inside this portfolio for authorized management. "
+                "Access is strictly restricted to Suryakiran P J."
             )
             action = "OPEN_ADMIN"
         else:

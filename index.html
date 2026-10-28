@@ -1863,21 +1863,18 @@
         <form onsubmit="event.preventDefault(); unlockAdmin();">
           <div class="form-group" style="margin-bottom: 14px;">
             <label class="form-label">Username</label>
-            <input type="text" id="admin-user" class="form-input" value="admin" placeholder="Enter username (admin)" autocomplete="username" required>
+            <input type="text" id="admin-user" class="form-input" placeholder="Enter username" autocomplete="username" required>
           </div>
           <div class="form-group" style="margin-bottom: 16px;">
             <label class="form-label">Password</label>
-            <input type="password" id="admin-pass" class="form-input" placeholder="Enter password (surya007)" autocomplete="current-password" required>
+            <input type="password" id="admin-pass" class="form-input" placeholder="Enter password" autocomplete="current-password" required>
           </div>
           <div id="admin-auth-error" style="display: none; color: #f87171; font-size: 13px; margin-bottom: 14px; padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; text-align: left;">
-            Invalid credentials. Username: <strong>admin</strong> | Password: <strong>surya007</strong>
+            Access denied. Invalid administrator credentials.
           </div>
           <button type="submit" class="btn-pill btn-pill-white" style="width: 100%;">
             <span>Authenticate Session</span>
           </button>
-          <div style="margin-top: 14px; font-size: 12px; color: var(--muted); text-align: center;">
-            Default Credentials: <code>admin</code> / <code>surya007</code>
-          </div>
         </form>
       </div>
 
@@ -2099,7 +2096,7 @@
       } else {
         if (errBox) {
           errBox.style.display = 'block';
-          errBox.innerHTML = 'Authentication failed. Please use username: <strong>admin</strong> and password: <strong>surya007</strong>';
+          errBox.innerText = 'Access denied. Invalid administrator credentials.';
         }
       }
     }

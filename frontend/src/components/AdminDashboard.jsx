@@ -6,7 +6,7 @@ import { API_BASE } from '../config/api';
 
 export default function AdminDashboard({ isOpen, onClose, onProjectCreated, projects, onDeleteProject, initialTab = 'add' }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [username, setUsername] = useState('admin');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -62,19 +62,12 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
 
   const handleLogin = (e) => {
     e?.preventDefault();
-    if (username.trim() === 'admin' && (password === 'surya007' || password === 'admin123')) {
+    if (username.trim() === 'admin' && password === 'surya007') {
       setIsAuthenticated(true);
       setAuthError('');
     } else {
-      setAuthError('Incorrect credentials. Enter username: "admin" & password: "surya007"');
+      setAuthError('Access denied. Invalid administrator credentials.');
     }
-  };
-
-  const handleQuickUnlock = () => {
-    setUsername('admin');
-    setPassword('surya007');
-    setIsAuthenticated(true);
-    setAuthError('');
   };
 
 
@@ -246,7 +239,7 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Username</label>
                 <input
                   type="text"
-                  placeholder="Username (e.g. admin)"
+                  placeholder="Enter username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="form-input"
@@ -258,7 +251,7 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
                 <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Password</label>
                 <input
                   type="password"
-                  placeholder="Password (e.g. surya007)"
+                  placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="form-input"
@@ -277,22 +270,6 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
               <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '6px' }}>
                 <Key size={16} />
                 <span>Authorize Access</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleQuickUnlock}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: 'var(--cyan)',
-                  fontSize: '0.85rem',
-                  cursor: 'pointer',
-                  textDecoration: 'underline',
-                  marginTop: '8px'
-                }}
-              >
-                ⚡ Quick Unlock (Auto-fill admin / surya007)
               </button>
             </form>
           </div>
