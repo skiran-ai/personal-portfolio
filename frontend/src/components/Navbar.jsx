@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bot, FileText, Lock, Menu, X, Sparkles } from 'lucide-react';
 
 export default function Navbar({
@@ -8,6 +8,44 @@ export default function Navbar({
   isJarvisSpeaking = false
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isNavHidden, setIsNavHidden] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+
+          if (currentScrollY > 20) {
+            setIsScrolled(true);
+          } else {
+            setIsScrolled(false);
+          }
+
+          if (mobileMenuOpen || currentScrollY <= 60) {
+            setIsNavHidden(false);
+          } else if (Math.abs(currentScrollY - lastScrollY) > 10) {
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+              setIsNavHidden(true);
+            } else if (currentScrollY < lastScrollY) {
+              setIsNavHidden(false);
+            }
+          }
+
+          lastScrollY = Math.max(0, currentScrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [mobileMenuOpen]);
 
   return (
     <header
@@ -16,7 +54,10 @@ export default function Navbar({
         top: 0,
         zIndex: 100,
         padding: '16px 20px',
-        width: '100%'
+        width: '100%',
+        transform: isNavHidden ? 'translateY(-120%)' : 'translateY(0)',
+        transition: 'transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, box-shadow 0.3s ease',
+        willChange: 'transform'
       }}
     >
       <div

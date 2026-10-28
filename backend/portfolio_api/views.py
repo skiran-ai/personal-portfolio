@@ -265,6 +265,38 @@ def contact_messages(request):
 
 
 @csrf_exempt
+def admin_login(request):
+    """
+    POST: Authenticates administrator credentials.
+    Configured for username 'admin' and password 'surya007'.
+    """
+    if request.method != 'POST':
+        return JsonResponse({"status": "error", "message": "POST method required"}, status=405)
+
+    try:
+        from django.contrib.auth import authenticate
+        data = json.loads(request.body.decode('utf-8'))
+        username = data.get('username', '').strip()
+        password = data.get('password', '').strip()
+
+        user = authenticate(request, username=username, password=password)
+        if (user is not None and user.is_staff) or (username == 'admin' and password == 'surya007'):
+            return JsonResponse({
+                "status": "success",
+                "authenticated": True,
+                "username": "admin",
+                "message": "Admin authenticated successfully."
+            })
+        return JsonResponse({
+            "status": "error",
+            "authenticated": False,
+            "message": "Invalid username or password. Default is admin / surya007."
+        }, status=401)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)
+
+
+@csrf_exempt
 def jarvis_chat(request):
     """
     Agentic AI Assistant 'Jarvis' responding intelligently with knowledge of Suryakiran.
@@ -350,7 +382,7 @@ def jarvis_chat(request):
             reply = (
                 "The Admin Dashboard is built directly inside this portfolio! "
                 "Click the 'Admin Portal' button in the header or hero to access it. "
-                "Default access PIN is 'admin123' or 'surya2026'."
+                "Default credentials: username 'admin' and password 'surya007'."
             )
             action = "OPEN_ADMIN"
         else:

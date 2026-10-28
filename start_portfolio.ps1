@@ -29,7 +29,7 @@ Write-Host "==========================================================" -Foregro
 Write-Host "  🖥️  On this Computer:     http://localhost:5173" -ForegroundColor Green
 Write-Host "  📱  On Mobile / Tablets:   http://$($localIp):5173" -ForegroundColor Yellow
 Write-Host "  ⚙️  Django API Backend:    http://127.0.0.1:8000/api/ (bound to 0.0.0.0:8000)" -ForegroundColor Green
-Write-Host "  🔑  Admin Portal Passcode: admin123 (or click Quick Unlock)" -ForegroundColor Magenta
+Write-Host "  🔑  Admin Portal Login:      username: admin | password: surya007" -ForegroundColor Magenta
 Write-Host "  📧  Inquiries Target:      suryakiranpjineesh@gmail.com" -ForegroundColor Cyan
 Write-Host "==========================================================" -ForegroundColor Cyan
 Write-Host "  📱 Browser tips for phones:" -ForegroundColor Gray

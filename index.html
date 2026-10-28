@@ -154,7 +154,24 @@
       -webkit-backdrop-filter: blur(16px);
       background: rgba(5, 5, 5, 0.75);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      transition: all 0.3s ease;
+      transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+      will-change: transform;
+    }
+
+    .topbar.nav-hidden {
+      transform: translateY(-100%);
+      box-shadow: none;
+      pointer-events: none;
+    }
+
+    .topbar.scrolled {
+      background: rgba(5, 5, 5, 0.92);
+      border-bottom-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    section, main, .hero-section {
+      scroll-margin-top: 88px;
     }
 
     .topbar-inner {
@@ -407,7 +424,17 @@
     .hero-title .title-accent {
       background: linear-gradient(135deg, #ffffff 40%, #00f2fe 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
+    }
+
+    .footer-top-link {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .footer-top-link:hover {
+      color: #ffffff;
     }
 
     .hero-role {
@@ -1780,7 +1807,7 @@
         © 2026 <strong>Suryakiran P J</strong> • Engineered with Python, Django, Three.js & Autonomous AI.
       </div>
       <div style="display: flex; gap: 18px;">
-        <a href="#hero" style="color: var(--muted); hover: color: #ffffff;">Back to Top ↑</a>
+        <a href="#hero" class="footer-top-link">Back to Top ↑</a>
       </div>
     </div>
   </footer>
@@ -1833,18 +1860,31 @@
       <p style="font-size: 14px; color: var(--muted); margin-bottom: 20px;">Authenticated portal for managing portfolio content and inspecting transmissions.</p>
 
       <div id="admin-login-view">
-        <div class="form-group">
-          <label class="form-label">Security Passkey</label>
-          <input type="password" id="admin-pass" class="form-input" placeholder="Enter administrative password (e.g. admin123)">
-        </div>
-        <button class="btn-pill btn-pill-white" style="width: 100%;" onclick="unlockAdmin()">
-          <span>Authenticate Session</span>
-        </button>
+        <form onsubmit="event.preventDefault(); unlockAdmin();">
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">Username</label>
+            <input type="text" id="admin-user" class="form-input" value="admin" placeholder="Enter username (admin)" autocomplete="username" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label">Password</label>
+            <input type="password" id="admin-pass" class="form-input" placeholder="Enter password (surya007)" autocomplete="current-password" required>
+          </div>
+          <div id="admin-auth-error" style="display: none; color: #f87171; font-size: 13px; margin-bottom: 14px; padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; text-align: left;">
+            Invalid credentials. Username: <strong>admin</strong> | Password: <strong>surya007</strong>
+          </div>
+          <button type="submit" class="btn-pill btn-pill-white" style="width: 100%;">
+            <span>Authenticate Session</span>
+          </button>
+          <div style="margin-top: 14px; font-size: 12px; color: var(--muted); text-align: center;">
+            Default Credentials: <code>admin</code> / <code>surya007</code>
+          </div>
+        </form>
       </div>
 
       <div id="admin-panel-view" style="display: none;">
-        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--emerald); margin-bottom: 18px;">
-          ✓ Authenticated as Administrator (Suryakiran P J).
+        <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--emerald); margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;">
+          <span>✓ Authenticated as Administrator (admin).</span>
+          <button onclick="logoutAdmin()" class="btn-pill btn-pill-outline" style="font-size: 11.5px; padding: 4px 12px;">Sign Out</button>
         </div>
         <h4 style="color: #ffffff; font-size: 15px; margin-bottom: 12px;">Recent Contact Transmissions</h4>
         <div id="admin-messages-list" style="max-height: 220px; overflow-y: auto; background: #07090e; border-radius: 12px; padding: 14px; border: 1px solid rgba(255, 255, 255, 0.1);">
@@ -2048,11 +2088,27 @@
 
     // 5. Admin Dashboard Logic
     function unlockAdmin() {
-      const pass = document.getElementById('admin-pass').value;
-      if (pass === 'admin123' || pass.length > 0) {
+      const user = (document.getElementById('admin-user')?.value || '').trim();
+      const pass = (document.getElementById('admin-pass')?.value || '').trim();
+      const errBox = document.getElementById('admin-auth-error');
+
+      if (user === 'admin' && pass === 'surya007') {
+        if (errBox) errBox.style.display = 'none';
         document.getElementById('admin-login-view').style.display = 'none';
         document.getElementById('admin-panel-view').style.display = 'block';
+      } else {
+        if (errBox) {
+          errBox.style.display = 'block';
+          errBox.innerHTML = 'Authentication failed. Please use username: <strong>admin</strong> and password: <strong>surya007</strong>';
+        }
       }
+    }
+
+    function logoutAdmin() {
+      document.getElementById('admin-panel-view').style.display = 'none';
+      document.getElementById('admin-login-view').style.display = 'block';
+      const passInput = document.getElementById('admin-pass');
+      if (passInput) passInput.value = '';
     }
 
     // 6. Project Filter Logic
@@ -2152,6 +2208,44 @@
         drawer.classList.toggle('open');
       }
     }
+
+    // 10. Hide Navbar on Scroll Down, Show on Scroll Up (Smooth Scrolling Animation)
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    let scrollTicking = false;
+    const topbarElement = document.querySelector('.topbar');
+    const scrollThreshold = 10;
+
+    function updateNavbarOnScroll() {
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+      const drawer = document.getElementById('mobile-drawer');
+      const isDrawerOpen = drawer && drawer.classList.contains('open');
+
+      if (currentScrollY > 20) {
+        topbarElement?.classList.add('scrolled');
+      } else {
+        topbarElement?.classList.remove('scrolled');
+      }
+
+      if (isDrawerOpen || currentScrollY <= 60) {
+        topbarElement?.classList.remove('nav-hidden');
+      } else if (Math.abs(currentScrollY - lastScrollY) > scrollThreshold) {
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+          topbarElement?.classList.add('nav-hidden');
+        } else if (currentScrollY < lastScrollY) {
+          topbarElement?.classList.remove('nav-hidden');
+        }
+      }
+
+      lastScrollY = Math.max(0, currentScrollY);
+      scrollTicking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!scrollTicking) {
+        window.requestAnimationFrame(updateNavbarOnScroll);
+        scrollTicking = true;
+      }
+    }, { passive: true });
   </script>
 </body>
 </html>

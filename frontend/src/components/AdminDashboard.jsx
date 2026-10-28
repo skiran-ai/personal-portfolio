@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lock, Key, Plus, Trash2, Mail, Bot, Check, AlertCircle, RefreshCw, Layers, Star, ExternalLink, Terminal } from 'lucide-react';
+import { X, Lock, Key, Plus, Trash2, Mail, Bot, Check, AlertCircle, RefreshCw, Layers, Terminal } from 'lucide-react';
 import { GithubIcon } from './SocialIcons';
 import confetti from 'canvas-confetti';
 import { API_BASE } from '../config/api';
 
 export default function AdminDashboard({ isOpen, onClose, onProjectCreated, projects, onDeleteProject, initialTab = 'add' }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passcode, setPasscode] = useState('');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -32,33 +33,6 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
   const [jarvisTestResponse, setJarvisTestResponse] = useState('');
   const [testingJarvis, setTestingJarvis] = useState(false);
 
-  useEffect(() => {
-    if (initialTab) {
-      setActiveTab(initialTab);
-    }
-  }, [initialTab]);
-
-  useEffect(() => {
-    if (isAuthenticated && activeTab === 'inbox') {
-      fetchMessages();
-    }
-  }, [isAuthenticated, activeTab]);
-
-  const handleLogin = (e) => {
-    e?.preventDefault();
-    if (passcode === 'admin123' || passcode === 'surya2026' || passcode === 'admin') {
-      setIsAuthenticated(true);
-      setAuthError('');
-    } else {
-      setAuthError('Incorrect passcode. Hint: Use "admin123" or click Quick Unlock');
-    }
-  };
-
-  const handleQuickUnlock = () => {
-    setIsAuthenticated(true);
-    setAuthError('');
-  };
-
   const fetchMessages = async () => {
     setLoadingMessages(true);
     try {
@@ -73,6 +47,37 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
       setLoadingMessages(false);
     }
   };
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'inbox') {
+      fetchMessages();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  const handleLogin = (e) => {
+    e?.preventDefault();
+    if (username.trim() === 'admin' && (password === 'surya007' || password === 'admin123')) {
+      setIsAuthenticated(true);
+      setAuthError('');
+    } else {
+      setAuthError('Incorrect credentials. Enter username: "admin" & password: "surya007"');
+    }
+  };
+
+  const handleQuickUnlock = () => {
+    setUsername('admin');
+    setPassword('surya007');
+    setIsAuthenticated(true);
+    setAuthError('');
+  };
+
+
 
   const handleCreateProject = async (e) => {
     e.preventDefault();
@@ -237,23 +242,39 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
             </p>
 
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <input
-                type="password"
-                placeholder="Enter passcode (e.g. admin123)"
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                className="form-input"
-                autoFocus
-              />
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Username</label>
+                <input
+                  type="text"
+                  placeholder="Username (e.g. admin)"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
+
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Password</label>
+                <input
+                  type="password"
+                  placeholder="Password (e.g. surya007)"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="form-input"
+                  autoFocus
+                  required
+                />
+              </div>
 
               {authError && (
-                <div style={{ color: '#f87171', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ color: '#f87171', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '6px', textAlign: 'left' }}>
                   <AlertCircle size={15} />
                   <span>{authError}</span>
                 </div>
               )}
 
-              <button type="submit" className="btn-primary" style={{ width: '100%' }}>
+              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '6px' }}>
                 <Key size={16} />
                 <span>Authorize Access</span>
               </button>
@@ -271,7 +292,7 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
                   marginTop: '8px'
                 }}
               >
-                ⚡ Quick Unlock (One-Click Demo Access)
+                ⚡ Quick Unlock (Auto-fill admin / surya007)
               </button>
             </form>
           </div>
