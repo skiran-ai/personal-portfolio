@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KIMI — GRIDO1 Racing Systems</title>
-<meta name="description" content="Kimi Antonelli, driver_012 of GRIDO1 Racing Systems — rookie Mercedes-AMG F1 season.">
+<title>Suryakiran P J — AI-Integrated Full Stack &amp; Forward Deployed Engineer (Python / Django)</title>
+<meta name="description" content="Suryakiran P J — AI-Integrated Full Stack &amp; Forward Deployed Engineer specializing in Python, Django, REST APIs, and Autonomous Agentic AI.">
 <script type="importmap">
 {
   "imports": {
@@ -1013,6 +1013,233 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
 .hl-dot.on-dark, .hl-dot.on-white { color: var(--raw-color-white); }
 .hl-dot.on-accent { color: var(--accent); }
 .ft-cta { width: var(--cta-w, calc(var(--cta-h, 3.4722cqw) * 5.5)); }
+
+/* ============================================================
+   SURYAKIRAN CUSTOM MODULES: BRANDING, JARVIS, MODALS, PROJECTS
+   ============================================================ */
+
+/* Logo branding */
+.hero-logo { display: flex; align-items: center; text-decoration: none; }
+.logo-wrap { display: flex; align-items: center; gap: 0.65rem; }
+.logo-tag {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; background: var(--accent); color: #090a0b;
+  font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;
+  letter-spacing: -0.02em; border-radius: 4px;
+}
+.logo-name {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.25rem;
+  letter-spacing: 0.04em; color: var(--foreground);
+}
+.logo-sub {
+  font-family: var(--font-sans); font-size: 0.72rem; letter-spacing: 0.05em;
+  color: var(--accent); opacity: 0.95;
+}
+
+/* Nav Action Buttons */
+.jarvis-nav-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(2, 210, 227, 0.08); border: 1px solid var(--accent);
+  color: var(--foreground); cursor: pointer; border-radius: 4px; padding: 0.4rem 0.8rem;
+}
+.jarvis-pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse-dot 1.8s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(1.3); }
+}
+
+.admin-nav-btn {
+  cursor: pointer; opacity: 0.85;
+}
+.admin-nav-btn:hover { opacity: 1; color: var(--accent); }
+
+/* Jarvis Voice Controller inside Hero */
+.jarvis-hero-box {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(14, 15, 20, 0.94); border: 1px solid var(--raw-color-cyan-alpha-25);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  padding: 8px 14px; border-radius: 10px; cursor: pointer;
+  transition: border-color var(--duration-fast);
+}
+.jarvis-hero-box:hover { border-color: var(--accent); }
+.jarvis-hero-icon {
+  width: 30px; height: 30px; border-radius: 50%; background: var(--accent);
+  color: #090a0b; font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.jarvis-hero-text { display: flex; flex-direction: column; text-align: left; }
+.jarvis-hero-title {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-sans); font-size: 12px; font-weight: 700; color: #ffffff;
+  text-transform: uppercase; letter-spacing: 0.02em;
+}
+.jarvis-badge {
+  font-size: 9px; padding: 1px 6px; border-radius: 999px;
+  background: rgba(2, 210, 227, 0.2); color: var(--accent);
+  border: 1px solid var(--accent); font-weight: 600; text-transform: uppercase;
+}
+.jarvis-hero-sub {
+  font-size: 10px; color: var(--raw-color-steel-400); text-transform: uppercase;
+}
+.jarvis-play-btn {
+  background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff; font-family: var(--font-sans); font-size: 11px; font-weight: 600;
+  padding: 6px 12px; border-radius: 6px; cursor: pointer; text-transform: uppercase;
+  transition: all var(--duration-fast);
+}
+.jarvis-hero-box:hover .jarvis-play-btn { background: var(--accent); color: #090a0b; border-color: var(--accent); }
+
+/* Schematic Graphic in Upper Hero Panel */
+.arch-schematic { width: 100%; height: auto; max-width: 120px; }
+
+/* Modals */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(5, 7, 10, 0.9);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.25s var(--ease-entrance), visibility 0.25s;
+}
+.modal-overlay.active {
+  opacity: 1; visibility: visible; pointer-events: auto;
+}
+.modal-box {
+  width: 100%; max-width: 760px; background: #0e0f14;
+  border: 1px solid var(--raw-color-cyan-alpha-25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(2, 210, 227, 0.12);
+  border-radius: 12px; padding: clamp(22px, 3.5vw, 36px);
+  position: relative; max-height: 90vh; overflow-y: auto;
+  transform: translateY(16px); transition: transform 0.25s var(--ease-entrance);
+  color: var(--foreground-on-dark);
+}
+.modal-overlay.active .modal-box { transform: translateY(0); }
+.modal-close {
+  position: absolute; right: 18px; top: 18px; width: 34px; height: 34px;
+  background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff; font-size: 20px; line-height: 1; border-radius: 6px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--duration-fast);
+}
+.modal-close:hover { background: var(--accent); color: #090a0b; border-color: var(--accent); }
+
+.modal-tag {
+  font-family: var(--font-sans); font-size: 11px; text-transform: uppercase;
+  color: var(--accent); letter-spacing: 0.08em; font-weight: 700; margin-bottom: 6px;
+}
+.modal-title {
+  font-family: var(--font-display); font-size: clamp(24px, 3vw, 32px);
+  font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;
+  color: #ffffff; margin-bottom: 8px; line-height: 1;
+}
+.modal-desc {
+  font-size: 13.5px; color: var(--raw-color-steel-400); line-height: 1.5; margin-bottom: 22px;
+}
+
+/* Modal Buttons & Inputs */
+.m-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 18px; font-family: var(--font-sans); font-size: 12px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em; border-radius: 6px; cursor: pointer;
+  transition: all var(--duration-fast); text-decoration: none; border: none;
+}
+.m-btn-accent { background: var(--accent); color: #090a0b; }
+.m-btn-accent:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.m-btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+.m-btn-outline:hover { background: var(--accent); color: #090a0b; }
+
+.m-input {
+  width: 100%; background: #07080b; border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px; padding: 12px 14px; font-family: var(--font-sans);
+  font-size: 13px; color: #ffffff; outline: none; transition: border-color var(--duration-fast);
+  margin-top: 6px;
+}
+.m-input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(2, 210, 227, 0.2); }
+
+/* Floating Jarvis FAB */
+.jarvis-fab {
+  position: fixed; bottom: 24px; right: 24px; z-index: 100;
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--accent); color: #090a0b; border: none;
+  font-size: 22px; font-weight: bold; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(2, 210, 227, 0.4), 0 0 12px rgba(2, 210, 227, 0.6);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.jarvis-fab:hover { transform: scale(1.1); box-shadow: 0 12px 30px rgba(2, 210, 227, 0.6); }
+
+/* Project Deck Grid */
+.projects-deck {
+  position: relative; z-index: 25; max-width: 1320px; margin: 3rem auto 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.5rem; padding: 0 2rem 4rem;
+}
+.proj-card {
+  background: rgba(14, 15, 20, 0.92); backdrop-filter: blur(12px);
+  border: 1px solid rgba(2, 210, 227, 0.2); border-radius: 10px;
+  padding: 1.75rem; position: relative; display: flex; flex-direction: column;
+  justify-content: space-between; transition: all 0.25s var(--ease-entrance);
+}
+.proj-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), 0 0 20px rgba(2, 210, 227, 0.15);
+  transform: translateY(-3px);
+}
+.proj-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem; }
+.proj-tag {
+  font-family: var(--font-sans); font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent);
+  background: rgba(2, 210, 227, 0.12); padding: 3px 8px; border-radius: 4px;
+}
+.proj-title {
+  font-family: var(--font-display); font-size: 1.45rem; font-weight: 700;
+  text-transform: uppercase; color: #ffffff; letter-spacing: 0.02em; margin-bottom: 0.85rem;
+}
+.proj-bullets {
+  list-style: none; margin: 0 0 1.25rem; padding: 0; display: flex; flex-direction: column; gap: 0.65rem;
+}
+.proj-bullet {
+  font-size: 0.8125rem; line-height: 1.5; color: var(--raw-color-steel-400);
+}
+.proj-bullet strong { color: #ffffff; font-weight: 600; }
+.proj-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.25rem; }
+.proj-pill {
+  font-size: 0.6875rem; padding: 2px 7px; background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 3px;
+  color: var(--foreground-on-dark); font-family: var(--font-sans); text-transform: uppercase;
+}
+.proj-action {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-sans); font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; color: var(--accent); text-decoration: none;
+  transition: transform var(--duration-fast);
+}
+.proj-action:hover { transform: translateX(3px); }
+
+/* Contact Form in Section 5 */
+.contact-container {
+  position: relative; z-index: 25; max-width: 1040px; margin: 2rem auto 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; padding: 0 2rem;
+  color: var(--foreground-on-dark);
+}
+@media (max-width: 768px) {
+  .contact-container { grid-template-columns: 1fr; }
+}
+.contact-info-list { display: flex; flex-direction: column; gap: 1rem; }
+.contact-item { display: flex; align-items: flex-start; gap: 12px; }
+.contact-item-icon {
+  width: 32px; height: 32px; border-radius: 6px; background: rgba(2, 210, 227, 0.1);
+  border: 1px solid var(--raw-color-cyan-alpha-25); display: flex; align-items: center; justify-content: center;
+  color: var(--accent); font-size: 14px; flex-shrink: 0;
+}
+.contact-item-label { font-size: 11px; text-transform: uppercase; color: var(--raw-color-steel-400); letter-spacing: 0.04em; }
+.contact-item-val { font-size: 14px; font-weight: 600; color: #ffffff; word-break: break-all; }
+.contact-item-val a { color: #ffffff; transition: color var(--duration-fast); }
+.contact-item-val a:hover { color: var(--accent); }
+
 </style>
 </head>
 <body>
@@ -1044,19 +1271,31 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
         <div class="hero-content">
 
           <header class="hero-head" data-rise data-rise-delay="0" data-rise-gate="hero">
-            <a class="hero-logo" href="/" aria-label="Grido1 Racing Systems">
-              <img src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/grido1-logo.webp" alt="" width="424" height="97">
+            <a class="hero-logo" href="#hero" aria-label="Suryakiran P J">
+              <div class="logo-wrap">
+                <span class="logo-tag">SK</span>
+                <span class="logo-name">SURYAKIRAN P J</span>
+                <span class="logo-sub">[ AI // DEV ]</span>
+              </div>
             </a>
             <nav class="hero-nav" aria-label="Primary">
               <ul>
-                <li><a class="navlink" href="/driver">Driver</a></li>
-                <li><a class="navlink" href="/season">SEASON</a></li>
-                <li><a class="navlink" href="/journal">journal</a></li>
-                <li><a class="navlink" href="/next-race">next race</a></li>
-                <li><a class="navlink" href="/store">store</a></li>
+                <li><a class="navlink" href="#about">About</a></li>
+                <li><a class="navlink" href="#skills">Stack</a></li>
+                <li><a class="navlink" href="#timeline">Timeline</a></li>
+                <li><a class="navlink" href="#projects">Projects</a></li>
+                <li><a class="navlink" href="#contact">Contact</a></li>
               </ul>
             </nav>
-            <a class="navlink hero-garage" href="/garage"><span aria-hidden="true">[ </span>Garage<span aria-hidden="true"> &rarr; ]</span></a>
+            <button class="navlink hero-garage jarvis-nav-btn" type="button" onclick="toggleJarvisSpeech()" aria-label="Toggle Jarvis AI Voice">
+              <span class="jarvis-pulse-dot"></span><span>Jarvis AI</span>
+            </button>
+            <button class="navlink hero-garage" type="button" onclick="openModal('resume-modal')">
+              <span aria-hidden="true">[ </span>Resume &amp; CV<span aria-hidden="true"> &rarr; ]</span>
+            </button>
+            <button class="navlink hero-garage admin-nav-btn" type="button" onclick="openModal('admin-modal')">
+              <span>Admin</span>
+            </button>
             <button class="hero-burger" type="button" aria-label="Open menu" aria-expanded="false" data-burger>
               <span></span><span></span>
             </button>
@@ -1066,22 +1305,22 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
 
             <div class="hero-identity">
               <div>
-                <p class="hero-id" data-rise data-rise-delay="180" data-rise-y="0" data-rise-gate="hero">driver_012</p>
+                <p class="hero-id" data-rise data-rise-delay="180" data-rise-y="0" data-rise-gate="hero">AI_ENGINEER_01 // FORWARD DEPLOYED</p>
                 <h1 class="hero-name rv" data-rv data-rv-split="words" data-rv-stagger="110"
-                    data-rv-cfg="REVEAL" data-rv-delay="180" data-rv-mode="once" data-rv-gate="hero">kimi antonelli</h1>
+                    data-rv-cfg="REVEAL" data-rv-delay="180" data-rv-mode="once" data-rv-gate="hero">suryakiran p j</h1>
               </div>
               <ul class="hero-meta">
                 <li data-rise data-rise-delay="440" data-rise-y="0.75rem" data-rise-cfg="ROW" data-rise-gate="hero">
-                  <img class="m-flag" src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/flag-italy.webp" alt="Italy" width="18" height="12">
-                  <span>Italy</span>
+                  <span style="font-size:1.15rem;line-height:1;">🇮🇳</span>
+                  <span>India | Kerala</span>
                 </li>
                 <li data-rise data-rise-delay="570" data-rise-y="0.75rem" data-rise-cfg="ROW" data-rise-gate="hero">
-                  <img class="m-rookie" src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/icon-rookie.svg" alt="" aria-hidden="true" width="16" height="16">
-                  <span>rookie season_2026</span>
+                  <span style="color:var(--accent);font-size:1rem;">✦</span>
+                  <span>AI-Integrated Full Stack &amp; Forward Deployed Engineer</span>
                 </li>
                 <li data-rise data-rise-delay="700" data-rise-y="0.75rem" data-rise-cfg="ROW" data-rise-gate="hero">
-                  <img class="m-merc" src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/mercedes-logo.webp" alt="" aria-hidden="true" width="14" height="14">
-                  <span>Mercedes-AMG F1 Team</span>
+                  <span style="color:var(--accent);font-size:1rem;">✦</span>
+                  <span>Python / Django &amp; Autonomous Agents Architect</span>
                 </li>
               </ul>
             </div>
@@ -1093,14 +1332,23 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
                 <span class="bcorner bc-tr" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
                 <span class="bcorner bc-bl" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
                 <span class="bcorner bc-br" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
-                <p class="eyebrow">next race</p>
+                <p class="eyebrow">Featured Architecture</p>
                 <div class="race-body">
                   <dl class="race-list">
-                    <dt>belgian gp</dt>
-                    <dd>spa-francorchamps</dd>
-                    <dd><time datetime="2026-07-27">27 jul 2026</time></dd>
+                    <dt>FinSight AI</dt>
+                    <dd>Financial RAG Engine</dd>
+                    <dd>Python · Django · Gemini</dd>
                   </dl>
-                  <img data-hero-map src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/circuit-spa.webp" alt="Spa-Francorchamps circuit layout" width="312" height="199">
+                  <svg class="arch-schematic" viewBox="0 0 120 70" fill="none" aria-hidden="true">
+                    <rect x="5" y="10" width="32" height="20" rx="3" stroke="var(--accent)" stroke-width="1.2" fill="rgba(2,210,227,0.08)"/>
+                    <text x="21" y="23" font-size="7" fill="var(--foreground)" text-anchor="middle" font-family="var(--font-sans)" font-weight="700">LLM</text>
+                    <path d="M37 20H55" stroke="var(--accent)" stroke-dasharray="2 2"/>
+                    <rect x="55" y="10" width="32" height="20" rx="3" stroke="currentColor" stroke-width="1.2" fill="none"/>
+                    <text x="71" y="23" font-size="7" fill="currentColor" text-anchor="middle" font-family="var(--font-sans)" font-weight="700">RAG</text>
+                    <path d="M71 30V48H85" stroke="var(--accent)"/>
+                    <rect x="85" y="38" width="32" height="20" rx="3" stroke="var(--accent)" stroke-width="1.2" fill="rgba(2,210,227,0.08)"/>
+                    <text x="101" y="51" font-size="7" fill="var(--foreground)" text-anchor="middle" font-family="var(--font-sans)" font-weight="700">DRF</text>
+                  </svg>
                 </div>
               </div>
 
@@ -1109,11 +1357,11 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
                 <span class="bcorner bc-tr" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
                 <span class="bcorner bc-bl" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
                 <span class="bcorner bc-br" aria-hidden="true"><svg viewBox="0 0 10.5 10.5" fill="none"><path d="M0 0.5H10V10.5" stroke="currentColor"/></svg></span>
-                <p class="eyebrow">Season stats</p>
+                <p class="eyebrow">Core Metrics</p>
                 <dl data-hero-stats>
-                  <div><dt>Races</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="900" data-rv-gate="hero">12</dd></div>
-                  <div><dt>Podiums</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="990" data-rv-gate="hero">3</dd></div>
-                  <div><dt>Points</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="1080" data-rv-gate="hero">118</dd></div>
+                  <div><dt>Exp</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="900" data-rv-gate="hero">3+</dd></div>
+                  <div><dt>Systems</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="990" data-rv-gate="hero">10+</dd></div>
+                  <div><dt>Precision</dt><dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="26" data-rv-cfg="FIGURE" data-rv-delay="1080" data-rv-gate="hero">99%</dd></div>
                 </dl>
               </div>
 
@@ -1121,11 +1369,20 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
           </div>
 
           <div class="hero-actions" data-rise data-rise-delay="1500" data-rise-y="1.25rem" data-rise-gate="hero">
-            <a class="hero-trailer" href="/trailer">
-              <img src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/play-button.svg" alt="" aria-hidden="true" width="32" height="32">
-              <span class="t-lines"><span>watch trailer</span><span>01:26</span></span>
-            </a>
-            <a class="cta" href="/driver/kimi-antonelli">
+            <div class="jarvis-hero-box" onclick="toggleJarvisSpeech()" title="Click to hear male Jarvis AI assistant introduction">
+              <div class="jarvis-hero-icon">J</div>
+              <div class="jarvis-hero-text">
+                <div class="jarvis-hero-title">
+                  <span>Jarvis AI</span>
+                  <span id="jarvis-speaking-pill" class="jarvis-badge" style="display:none;">Speaking</span>
+                </div>
+                <span id="jarvis-sub-status" class="jarvis-hero-sub">Spoken Audio Intro</span>
+              </div>
+              <button type="button" id="jarvis-mute-btn" class="jarvis-play-btn">
+                <span>▶ Speak</span>
+              </button>
+            </div>
+            <a class="cta" href="#projects">
               <svg viewBox="0 0 220 50" preserveAspectRatio="none" aria-hidden="true" fill="none">
                 <path d="M220 42L212.932 50H0V0H220V42Z" fill="#0E0F14"/>
                 <path class="cta-flood" d="M220 42L212.932 50H0V0H220V42Z" fill="var(--accent)"/>
@@ -1135,27 +1392,28 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
                 <path d="M8 0.5H0.5V7" stroke="var(--accent)"/>
                 <path d="M7.5 49.5H0.5V42.5" stroke="var(--accent)"/>
               </svg>
-              <span class="cta-label">view profile</span>
+              <span class="cta-label">view projects</span>
               <svg class="cta-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true">
                 <path d="M0 5.35355H13M8 10.3536L13 5.35355L8 0.353553" stroke="var(--accent)"/>
               </svg>
             </a>
             <div class="hero-socials">
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">inst</a>
-              <a href="https://x.com" target="_blank" rel="noopener noreferrer">x</a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">youtube</a>
+              <a href="https://www.linkedin.com/in/surya-kiran-967659351" target="_blank" rel="noopener noreferrer">linkedin</a>
+              <a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer">github</a>
+              <a href="mailto:suryakiranpjineesh@gmail.com">email</a>
+              <a href="tel:+918129867662">tel</a>
             </div>
           </div>
 
         </div>
 
-        <div class="veil" role="status" aria-label="Loading Grido1 Racing Systems" data-veil>
+        <div class="veil" role="status" aria-label="Loading Suryakiran P J Portfolio" data-veil>
           <div class="veil-inner" data-veil-content>
             <div class="veil-helmet" data-veil-helmet style="-webkit-mask-image:url(https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/helmet-mask.png);mask-image:url(https://storage.getlayers.ai/assets/kimi-04a9449ab2/hero/ui/helmet-mask.png)">
               <span class="vh-faint"></span>
               <span class="vh-fill" data-veil-fill></span>
             </div>
-            <p class="veil-name" data-veil-name>kimi antonelli</p>
+            <p class="veil-name" data-veil-name>suryakiran p j</p>
           </div>
           <div class="veil-meter" data-veil-meter><i data-veil-bar></i></div>
         </div>
@@ -1184,14 +1442,14 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
 
         <div class="flag-band" data-flag data-flag-carry="light" aria-hidden="true"><canvas></canvas></div>
 
-        <div class="season-copy">
+        <div class="season-copy" id="skills">
           <div class="season-left">
             <h2 id="season-heading" class="season-head">
-              <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="season">the season</span></span>
-              <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="season">so far</span><span class="hl-dot on-dark" data-fade data-fade-delay="240" data-fade-gate="season">.</span></span>
+              <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="season">core stack</span></span>
+              <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="season">&amp; capabilities</span><span class="hl-dot on-dark" data-fade data-fade-delay="240" data-fade-gate="season">.</span></span>
             </h2>
             <div class="season-rule" data-scalex data-scalex-delay="260" data-scalex-gate="season"></div>
-            <p class="season-intro rv" data-rv data-rv-stagger="34" data-rv-cfg="COPY150" data-rv-delay="350" data-rv-gap="0.22" data-rv-gate="season">Every race is a step forward. Here&rsquo;s how the season is shaping up.</p>
+            <p class="season-intro rv" data-rv data-rv-stagger="34" data-rv-cfg="COPY150" data-rv-delay="350" data-rv-gap="0.22" data-rv-gate="season">Architecting resilient distributed backends, high-throughput RESTful APIs, and multi-agent LLM pipelines with Python, Django, and vector retrieval.</p>
           </div>
 
           <div class="season-plate-wrap" data-rise data-rise-delay="260" data-rise-y="0.75rem" data-rise-gate="season">
@@ -1207,22 +1465,22 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
                   <ellipse data-globe cx="18.5" cy="11.5" rx="18" ry="11" stroke="var(--accent)" stroke-width="1"/>
                 </svg>
                 <p class="plate-wordmark">
-                  <span class="pw-f1 rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="430" data-rv-gap="0" data-rv-gate="season">F1</span>
+                  <span class="pw-f1 rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="430" data-rv-gap="0" data-rv-gate="season">AI</span>
                   <span class="pw-yr rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="490" data-rv-gap="0" data-rv-gate="season">/ 2026</span>
                 </p>
               </div>
               <dl class="plate-stats">
                 <div class="prow">
                   <dt class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="430" data-rv-gap="0" data-rv-gate="season">P1</dt>
-                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="500" data-rv-gap="0" data-rv-gate="season">in the championship</dd>
+                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="500" data-rv-gap="0" data-rv-gate="season">High-Reliability Backends</dd>
                 </div>
                 <div class="prow">
-                  <dt class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="540" data-rv-gap="0" data-rv-gate="season">6</dt>
-                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="610" data-rv-gap="0" data-rv-gate="season">wins</dd>
+                  <dt class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="540" data-rv-gap="0" data-rv-gate="season">99.9%</dt>
+                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="610" data-rv-gap="0" data-rv-gate="season">System Uptime</dd>
                 </div>
                 <div class="prow">
-                  <dt class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="650" data-rv-gap="0" data-rv-gate="season">9</dt>
-                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="720" data-rv-gap="0" data-rv-gate="season">podiums.</dd>
+                  <dt class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="650" data-rv-gap="0" data-rv-gate="season">10+</dt>
+                  <dd class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="TYPE" data-rv-delay="720" data-rv-gap="0" data-rv-gate="season">Production Microservices</dd>
                 </div>
               </dl>
             </div>
@@ -1243,8 +1501,8 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
       <div class="tl-wrap" data-tl-wrap>
         <div class="tl-rail" data-tl-rail aria-hidden="true"></div>
         <h2 id="timeline-heading" class="tl-head">
-          <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="timeline">from karts</span></span>
-          <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="timeline">to f1</span><span class="hl-dot on-dark" data-fade data-fade-delay="240" data-fade-gate="timeline">.</span></span>
+          <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="timeline">from academic foundation</span></span>
+          <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="timeline">to forward deployed</span><span class="hl-dot on-dark" data-fade data-fade-delay="240" data-fade-gate="timeline">.</span></span>
         </h2>
         <div data-tl-rows></div>
       </div>
@@ -1260,24 +1518,24 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
   <div class="pd-contours" aria-hidden="true"><canvas data-contours data-contour-color="--paddock-contour"></canvas></div>
   <div class="pd-band" aria-hidden="true"></div>
   <div class="pd-fig-layer" data-pd-fig-layer aria-hidden="true">
-    <img class="pd-fig" src="https://storage.getlayers.ai/assets/kimi-04a9449ab2/paddock/portrait.webp" alt="Kimi Antonelli in the paddock" width="1350" height="1165">
+    <img class="pd-fig" src="/assets/paddock/portrait.webp" onerror="this.onerror=null;this.src='suryakiran.jpg'" alt="Suryakiran P J" width="1350" height="1165">
   </div>
   <div class="pd-melt" aria-hidden="true"></div>
   <div class="flag-band z30" data-flag data-flag-carry="dark" aria-hidden="true"><canvas></canvas></div>
 
   <h2 id="paddock-heading" class="pd-head">
-    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="paddock">from the</span></span>
-    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="paddock">paddock</span><span class="hl-dot on-accent" data-fade data-fade-delay="240" data-fade-gate="paddock">.</span></span>
+    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="paddock">featured</span></span>
+    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="paddock">projects</span><span class="hl-dot on-accent" data-fade data-fade-delay="240" data-fade-gate="paddock">.</span></span>
   </h2>
 
-  <div class="pd-intro">
-    <p class="pd-report rv" data-rv data-rv-stagger="30" data-rv-cfg="COPY150" data-rv-delay="350" data-rv-gap="0.22" data-rv-gate="paddock">A composed drive through a difficult weekend secured another podium &mdash; and kept Kimi at the top of the championship.</p>
-    <a class="slab" href="/stories/hungarian-gp" data-rise data-rise-delay="520" data-rise-y="0.75rem" data-rise-gate="paddock">
+  <div class="pd-intro" id="about">
+    <p class="pd-report rv" data-rv data-rv-stagger="30" data-rv-cfg="COPY150" data-rv-delay="350" data-rv-gap="0.22" data-rv-gate="paddock">Production systems engineered for financial precision, agentic automation, and high-throughput reliability.</p>
+    <a class="slab" href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer" data-rise data-rise-delay="520" data-rise-y="0.75rem" data-rise-gate="paddock">
       <svg viewBox="0 0 217 50" preserveAspectRatio="none" aria-hidden="true" fill="none">
         <path d="M0.5 0.5H216.5V42L209 49.5H0.5Z" fill="var(--surface-black)" stroke="var(--accent)" stroke-width="1" vector-effect="non-scaling-stroke"/>
         <path class="slab-flood" d="M0.5 0.5H216.5V42L209 49.5H0.5Z" fill="var(--accent)"/>
       </svg>
-      <span class="slab-label">read story
+      <span class="slab-label">view github
         <svg class="slab-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg>
       </span>
     </a>
@@ -1285,6 +1543,152 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
 
   <div class="pd-panel" data-pd-panels aria-hidden="false"></div>
   <div class="cal" data-cal></div>
+
+  <!-- Featured Projects & Credentials Deck -->
+  <div class="projects-deck" id="projects">
+    <!-- Project 1: FinSight AI -->
+    <div class="proj-card">
+      <div>
+        <div class="proj-top">
+          <span class="proj-tag">Predictive AI · Live</span>
+          <span style="font-size:11px;color:var(--accent);">Django DRF + Gemini</span>
+        </div>
+        <h3 class="proj-title">FinSight AI</h3>
+        <p style="font-size:12px;color:var(--raw-color-cyan-400);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;font-weight:600;">Intelligent Personal Finance &amp; Cash-Flow Forecasting</p>
+        <ul class="proj-bullets">
+          <li class="proj-bullet">
+            <strong>Problem Solved:</strong> Eliminates personal liquidity risks and cash-flow volatility by identifying recurring spending leaks and forecasting monthly balance trajectories.
+          </li>
+          <li class="proj-bullet">
+            <strong>Stack Architecture:</strong> Engineered high-throughput REST APIs using Python, Django REST Framework, and PostgreSQL with normalized schemas and optimized query indexing.
+          </li>
+          <li class="proj-bullet">
+            <strong>AI/LLM Integration:</strong> Integrated LangChain and LLM reasoning pipelines to automatically parse banking statements, classify transactions, and project forward cash-flow scenarios.
+          </li>
+        </ul>
+        <div class="proj-pills">
+          <span class="proj-pill">Python 3</span>
+          <span class="proj-pill">Django 5</span>
+          <span class="proj-pill">DRF</span>
+          <span class="proj-pill">PostgreSQL</span>
+          <span class="proj-pill">LangChain</span>
+          <span class="proj-pill">Gemini LLM</span>
+        </div>
+      </div>
+      <div>
+        <a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer" class="proj-action">
+          <span>Inspect Architecture on GitHub</span> &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Project 2: PayMatch AI -->
+    <div class="proj-card">
+      <div>
+        <div class="proj-top">
+          <span class="proj-tag">Autonomous AI · Multi-Agent</span>
+          <span style="font-size:11px;color:var(--accent);">Vector Search + Celery</span>
+        </div>
+        <h3 class="proj-title">PayMatch AI</h3>
+        <p style="font-size:12px;color:var(--raw-color-cyan-400);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;font-weight:600;">Payment Reconciliation &amp; Discrepancy Detection</p>
+        <ul class="proj-bullets">
+          <li class="proj-bullet">
+            <strong>Problem Solved:</strong> Resolves multi-gateway payment mismatches, fee anomalies, and missing settlement records across high-volume merchant transaction streams.
+          </li>
+          <li class="proj-bullet">
+            <strong>Stack Architecture:</strong> Architected robust backend reconciliation workflows in Python and Django with strict ACID transaction guarantees and batch PostgreSQL processing.
+          </li>
+          <li class="proj-bullet">
+            <strong>AI/LLM Integration:</strong> Implemented fuzzy matching agents and LLM-driven discrepancy analyzers to classify anomalies and generate automated audit resolution reports.
+          </li>
+        </ul>
+        <div class="proj-pills">
+          <span class="proj-pill">Python DRF</span>
+          <span class="proj-pill">Agentic AI</span>
+          <span class="proj-pill">Vector Search</span>
+          <span class="proj-pill">Celery</span>
+          <span class="proj-pill">Redis</span>
+          <span class="proj-pill">PostgreSQL</span>
+        </div>
+      </div>
+      <div>
+        <a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer" class="proj-action">
+          <span>Inspect Reconciliation Pipeline</span> &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Project 3: FinSim -->
+    <div class="proj-card">
+      <div>
+        <div class="proj-top">
+          <span class="proj-tag">Deterministic Engine · FinTech</span>
+          <span style="font-size:11px;color:var(--accent);">Monte Carlo + React</span>
+        </div>
+        <h3 class="proj-title">FinSim</h3>
+        <p style="font-size:12px;color:var(--raw-color-cyan-400);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;font-weight:600;">Financial Stress Testing &amp; Scenario Simulator</p>
+        <ul class="proj-bullets">
+          <li class="proj-bullet">
+            <strong>Problem Solved:</strong> Enables users to evaluate financial resilience by simulating real-world shocks like inflation spikes, medical emergencies, and income disruptions.
+          </li>
+          <li class="proj-bullet">
+            <strong>Stack Architecture:</strong> Developed deterministic financial simulation algorithms using Python and Django ORM, synchronized with reactive interactive charts in React.
+          </li>
+          <li class="proj-bullet">
+            <strong>AI/LLM Integration:</strong> Integrated generative AI scenario modeling agents that evaluate multi-variable macroeconomic conditions and formulate personalized contingency playbooks.
+          </li>
+        </ul>
+        <div class="proj-pills">
+          <span class="proj-pill">Python 3</span>
+          <span class="proj-pill">Django ORM</span>
+          <span class="proj-pill">Monte Carlo</span>
+          <span class="proj-pill">React 19</span>
+          <span class="proj-pill">TailwindCSS</span>
+          <span class="proj-pill">Docker</span>
+        </div>
+      </div>
+      <div>
+        <a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer" class="proj-action">
+          <span>Inspect Simulation Engine</span> &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Credentials & Education Card -->
+    <div class="proj-card" style="border-color:rgba(255,255,255,0.18);">
+      <div>
+        <div class="proj-top">
+          <span class="proj-tag" style="background:rgba(255,255,255,0.1);color:#ffffff;">Verified Credentials</span>
+          <span style="font-size:11px;color:var(--raw-color-steel-400);">Academic &amp; Professional</span>
+        </div>
+        <h3 class="proj-title">Education &amp; Training</h3>
+        <p style="font-size:12px;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;font-weight:600;">Software Engineering Foundation</p>
+        <ul class="proj-bullets">
+          <li class="proj-bullet">
+            <strong>B.Sc Computer Science:</strong> KMM College, Thrikkakara • <em>Coursework Completed (2023 – 2026)</em>. Rigorous focus on Data Structures, Algorithms, DBMS, Operating Systems, and OOP paradigms.
+          </li>
+          <li class="proj-bullet">
+            <strong>Python Django Full Stack Specialization:</strong> Avodha, Vyttila, Ernakulam • <em>6-Month Professional Program</em>. Specialized immersion in Python 3, Django 5, DRF, relational modeling, and RESTful architectures.
+          </li>
+          <li class="proj-bullet">
+            <strong>Higher Secondary Education (HSS):</strong> Sahodaran Memorial HSS, Cherai • Computer Applications, Mathematics, and Physical Sciences.
+          </li>
+        </ul>
+        <div class="proj-pills">
+          <span class="proj-pill">Algorithms</span>
+          <span class="proj-pill">Data Structures</span>
+          <span class="proj-pill">DBMS</span>
+          <span class="proj-pill">OOP</span>
+          <span class="proj-pill">Python Specialization</span>
+        </div>
+      </div>
+      <div>
+        <button type="button" onclick="openModal('resume-modal')" class="proj-action" style="background:none;border:none;cursor:pointer;">
+          <span>Download Official ATS Resume &amp; CV (.PDF)</span> &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ==========================================================
@@ -1302,40 +1706,228 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
     </div>
   </div>
 
-  <div class="ft-logo" role="img" aria-label="GRID01 Racing Systems" data-fade data-fade-delay="120" data-fade-gate="footer"
-       style="-webkit-mask-image:url(https://storage.getlayers.ai/assets/kimi-04a9449ab2/footer/logo-mask.png);mask-image:url(https://storage.getlayers.ai/assets/kimi-04a9449ab2/footer/logo-mask.png)"></div>
+  <div class="ft-logo" role="img" aria-label="Suryakiran P J" data-fade data-fade-delay="120" data-fade-gate="footer"
+       style="display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:clamp(2rem,6vw,4.5rem);font-weight:700;color:rgba(255,255,255,0.06);letter-spacing:0.08em;text-transform:uppercase;pointer-events:none;">
+    SURYAKIRAN P J
+  </div>
 
   <h2 id="footer-heading" class="ft-head">
-    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="footer">keep pushing</span></span>
-    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="footer">forward</span><span class="hl-dot on-white" data-fade data-fade-delay="240" data-fade-gate="footer">.</span></span>
+    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="0" data-rv-gate="footer">let's architect</span></span>
+    <span class="hl-line"><span class="rv" data-rv data-rv-stagger="110" data-rv-cfg="REVEAL" data-rv-delay="130" data-rv-gate="footer">the future</span><span class="hl-dot on-white" data-fade data-fade-delay="240" data-fade-gate="footer">.</span></span>
   </h2>
 
+  <!-- Interactive Contact & Communication Container -->
+  <div class="contact-container" id="contact">
+    <div class="contact-info-list">
+      <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:700;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem;">
+        Direct Inquiries
+      </div>
+      <p style="font-size:13.5px;color:var(--raw-color-steel-400);line-height:1.5;margin-bottom:1rem;">
+        Available for full-time Software Engineer positions, high-scale Python/Django backend roles, and Agentic AI contract implementations.
+      </p>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">✉</div>
+        <div>
+          <div class="contact-item-label">Email</div>
+          <div class="contact-item-val"><a href="mailto:suryakiranpjineesh@gmail.com">suryakiranpjineesh@gmail.com</a></div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">✆</div>
+        <div>
+          <div class="contact-item-label">Mobile Phone</div>
+          <div class="contact-item-val"><a href="tel:+918129867662">+91 8129867662</a></div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">📍</div>
+        <div>
+          <div class="contact-item-label">Location</div>
+          <div class="contact-item-val">Ernakulam, Kerala, India (Open to Remote / Relocation)</div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">💼</div>
+        <div>
+          <div class="contact-item-label">LinkedIn</div>
+          <div class="contact-item-val"><a href="https://www.linkedin.com/in/surya-kiran-967659351" target="_blank" rel="noopener noreferrer">linkedin.com/in/surya-kiran-967659351</a></div>
+        </div>
+      </div>
+
+      <div class="contact-item">
+        <div class="contact-item-icon">⚡</div>
+        <div>
+          <div class="contact-item-label">GitHub</div>
+          <div class="contact-item-val"><a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer">github.com/suryakiranpjineesh-bit</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div style="background:rgba(14,15,20,0.85);border:1px solid rgba(2,210,227,0.25);border-radius:12px;padding:22px;backdrop-filter:blur(10px);">
+      <form onsubmit="handleContactSubmit(event)">
+        <div style="font-family:var(--font-display);font-size:1.25rem;font-weight:700;text-transform:uppercase;color:#ffffff;margin-bottom:12px;">
+          Send Transmission
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:11px;text-transform:uppercase;color:var(--raw-color-steel-400);font-weight:700;">Full Name</label>
+          <input type="text" id="contact-name" class="m-input" placeholder="e.g. Alex Henderson" required>
+        </div>
+        <div style="margin-bottom:12px;">
+          <label style="font-size:11px;text-transform:uppercase;color:var(--raw-color-steel-400);font-weight:700;">Email Address</label>
+          <input type="email" id="contact-email" class="m-input" placeholder="alex@company.com" required>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:11px;text-transform:uppercase;color:var(--raw-color-steel-400);font-weight:700;">Message / Requirements</label>
+          <textarea id="contact-msg" class="m-input" style="height:80px;resize:vertical;" placeholder="Describe your team, role, or architecture requirements..." required></textarea>
+        </div>
+        <button type="submit" id="contact-btn" class="m-btn m-btn-accent" style="width:100%;">
+          <span>Send Transmission &rarr;</span>
+        </button>
+        <div id="contact-alert" style="display:none;margin-top:12px;font-size:12px;color:var(--accent);text-align:center;">
+          Transmission received. Stored to dispatch logs.
+        </div>
+      </form>
+    </div>
+  </div>
+
   <nav class="ft-nav" aria-label="Footer">
-    <a href="/driver"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="260" data-rv-gap="0.2" data-rv-gate="footer">driver</span><svg class="ft-nav-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg></a>
-    <a href="/season"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="340" data-rv-gap="0.2" data-rv-gate="footer">season</span><svg class="ft-nav-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg></a>
-    <a href="/journal"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="420" data-rv-gap="0.2" data-rv-gate="footer">journal</span><svg class="ft-nav-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg></a>
-    <a href="/next-race"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="500" data-rv-gap="0.2" data-rv-gate="footer">next race</span><svg class="ft-nav-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg></a>
-    <a href="/store"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="580" data-rv-gap="0.2" data-rv-gate="footer">store</span><svg class="ft-nav-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg></a>
+    <a href="#hero"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="260" data-rv-gap="0.2" data-rv-gate="footer">hero</span></a>
+    <a href="#about"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="340" data-rv-gap="0.2" data-rv-gate="footer">about</span></a>
+    <a href="#skills"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="420" data-rv-gap="0.2" data-rv-gate="footer">stack</span></a>
+    <a href="#timeline"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="500" data-rv-gap="0.2" data-rv-gate="footer">timeline</span></a>
+    <a href="#projects"><span class="rv" data-rv data-rv-split="letters" data-rv-stagger="22" data-rv-cfg="ROW" data-rv-delay="580" data-rv-gap="0.2" data-rv-gate="footer">projects</span></a>
   </nav>
 
-  <p class="ft-foot-item ft-copy" data-rise data-rise-delay="640" data-rise-y="0.75rem" data-rise-gate="footer">&copy; 2026 GRID01 Racing Systems. All rights reserved.</p>
+  <p class="ft-foot-item ft-copy" data-rise data-rise-delay="640" data-rise-y="0.75rem" data-rise-gate="footer">&copy; 2026 SURYAKIRAN P J. All rights reserved.</p>
 
-  <a class="ft-foot-item ft-cta slab" href="/legal" data-rise data-rise-delay="720" data-rise-y="0.75rem" data-rise-gate="footer" style="opacity:0">
+  <button class="ft-foot-item ft-cta slab" onclick="openModal('resume-modal')" data-rise data-rise-delay="720" data-rise-y="0.75rem" data-rise-gate="footer" style="opacity:0;border:none;background:none;cursor:pointer;">
     <svg viewBox="0 0 275 50" preserveAspectRatio="none" aria-hidden="true" fill="none">
       <path d="M0.5 0.5H274.5V41.165L266.165 49.5H0.5Z" fill="none" stroke="var(--accent)" stroke-width="1" vector-effect="non-scaling-stroke"/>
       <path class="slab-flood" d="M0.5 0.5H274.5V41.165L266.165 49.5H0.5Z" fill="var(--accent)"/>
     </svg>
-    <span class="slab-label">legal documents
+    <span class="slab-label">resume &amp; cv
       <svg class="slab-arrow" viewBox="0 0 13.7071 10.7071" fill="none" aria-hidden="true"><path d="M0 5.35H13M8 10.35L13 5.35L8 0.35" stroke="var(--accent)"/></svg>
     </span>
-  </a>
+  </button>
 
   <div class="ft-foot-item ft-socials" data-rise data-rise-delay="800" data-rise-y="0.75rem" data-rise-gate="footer">
-    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">inst</a>
-    <a href="https://x.com" target="_blank" rel="noopener noreferrer">x</a>
-    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer">youtube</a>
+    <a href="https://www.linkedin.com/in/surya-kiran-967659351" target="_blank" rel="noopener noreferrer">linkedin</a>
+    <a href="https://github.com/suryakiranpjineesh-bit" target="_blank" rel="noopener noreferrer">github</a>
+    <a href="mailto:suryakiranpjineesh@gmail.com">email</a>
+    <a href="tel:+918129867662">tel</a>
   </div>
 </section>
+
+<!-- ==========================================================
+     MODALS: ATS RESUME & CV, ADMIN PORTAL, JARVIS CHAT
+     ========================================================== -->
+
+<!-- Floating Jarvis FAB -->
+<button class="jarvis-fab" onclick="openModal('jarvis-modal')" title="Chat with Jarvis AI" aria-label="Open Jarvis AI Assistant">
+  ⚡
+</button>
+
+<!-- Modal 1: ATS Resume & CV -->
+<div id="resume-modal" class="modal-overlay" onclick="closeOnOverlay(event, 'resume-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('resume-modal')">&times;</button>
+    <div class="modal-tag">Verified Credentials</div>
+    <h3 class="modal-title">Official ATS Resume &amp; CV</h3>
+    <p class="modal-desc">Optimized for technical recruiters and ATS parsers with direct contact details, verified academic coursework, certifications, and GitHub repositories.</p>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:16px;margin-bottom:20px;">
+      <div style="background:#07080b;border:1px solid rgba(2,210,227,0.25);border-radius:10px;padding:20px;">
+        <div style="font-size:22px;margin-bottom:8px;">📄</div>
+        <div style="font-weight:700;color:#ffffff;font-size:15px;margin-bottom:4px;">Suryakiran P J - 1-Page Resume</div>
+        <div style="font-size:12px;color:var(--raw-color-steel-400);margin-bottom:16px;">Compact, high-density format tailored for fast technical scanning.</div>
+        <a href="Suryakiran_PJ_Resume.pdf" download="Suryakiran_PJ_Resume.pdf" class="m-btn m-btn-accent" style="width:100%;">
+          <span>Download Resume (.PDF)</span>
+        </a>
+      </div>
+
+      <div style="background:#07080b;border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:20px;">
+        <div style="font-size:22px;margin-bottom:8px;">📑</div>
+        <div style="font-weight:700;color:#ffffff;font-size:15px;margin-bottom:4px;">Suryakiran P J - Comprehensive CV</div>
+        <div style="font-size:12px;color:var(--raw-color-steel-400);margin-bottom:16px;">Full curriculum vitae detailing academic milestones, architecture, and projects.</div>
+        <a href="Suryakiran_PJ_CV.pdf" download="Suryakiran_PJ_CV.pdf" class="m-btn m-btn-outline" style="width:100%;">
+          <span>Download CV (.PDF)</span>
+        </a>
+      </div>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:14px;font-size:12.5px;color:var(--raw-color-steel-400);line-height:1.6;">
+      <strong style="color:var(--accent);">Direct Highlights:</strong> AI-Integrated Full Stack &amp; Forward Deployed Engineer &bull; Python 3 &bull; Django 5 &bull; Django REST Framework &bull; Autonomous Agentic AI &bull; PostgreSQL &bull; React 19 &bull; B.Sc Computer Science (Coursework Completed 2023–2026, KMM College) &bull; Avodha 6-Month Intensive Python Program.
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: Admin Dashboard -->
+<div id="admin-modal" class="modal-overlay" onclick="closeOnOverlay(event, 'admin-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('admin-modal')">&times;</button>
+    <div class="modal-tag">Internal Access</div>
+    <h3 class="modal-title">Admin Dashboard</h3>
+    <p class="modal-desc">Authenticated portal for managing portfolio content and inspecting contact transmissions.</p>
+
+    <div id="admin-login-view">
+      <form onsubmit="event.preventDefault(); unlockAdmin();">
+        <div style="margin-bottom:14px;">
+          <label style="font-size:11px;text-transform:uppercase;color:var(--raw-color-steel-400);font-weight:700;">Username</label>
+          <input type="text" id="admin-user" class="m-input" placeholder="Enter username" autocomplete="username" required>
+        </div>
+        <div style="margin-bottom:16px;">
+          <label style="font-size:11px;text-transform:uppercase;color:var(--raw-color-steel-400);font-weight:700;">Password</label>
+          <input type="password" id="admin-pass" class="m-input" placeholder="Enter password" autocomplete="current-password" required>
+        </div>
+        <div id="admin-auth-error" style="display:none;color:#f87171;font-size:12.5px;margin-bottom:14px;padding:10px 14px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:6px;">
+          Access denied. Invalid administrator credentials.
+        </div>
+        <button type="submit" class="m-btn m-btn-accent" style="width:100%;">
+          <span>Authenticate Session</span>
+        </button>
+      </form>
+    </div>
+
+    <div id="admin-panel-view" style="display:none;">
+      <div style="background:rgba(2,210,227,0.1);border:1px solid var(--accent);border-radius:8px;padding:12px 16px;font-size:13px;color:var(--accent);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;">
+        <span>✓ Authenticated as Administrator (admin).</span>
+        <button onclick="logoutAdmin()" class="m-btn m-btn-outline" style="padding:4px 12px;font-size:11px;">Sign Out</button>
+      </div>
+      <h4 style="color:#ffffff;font-size:14px;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:10px;">Recent Contact Transmissions</h4>
+      <div id="admin-messages-list" style="max-height:240px;overflow-y:auto;background:#07080b;border-radius:8px;padding:14px;border:1px solid rgba(255,255,255,0.1);">
+        <div style="font-size:12.5px;color:var(--raw-color-steel-400);">No unread messages. System running nominal.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 3: Jarvis AI Assistant Chat -->
+<div id="jarvis-modal" class="modal-overlay" onclick="closeOnOverlay(event, 'jarvis-modal')">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('jarvis-modal')">&times;</button>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div class="jarvis-hero-icon" style="width:32px;height:32px;font-size:14px;">J</div>
+      <h3 class="modal-title" style="margin-bottom:0;">Jarvis AI Assistant</h3>
+    </div>
+    <p class="modal-desc" style="margin-bottom:16px;">Ask any question about Suryakiran's experience, Python Django architecture, or projects.</p>
+
+    <div id="jarvis-chat-log" style="height:240px;overflow-y:auto;background:#07080b;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:14px;margin-bottom:14px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:rgba(2,210,227,0.08);border:1px solid rgba(2,210,227,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#e5e5e5;max-width:92%;">
+        Hello! I am Jarvis, personal AI assistant to Suryakiran P J. How can I assist you with exploring his engineering portfolio, Python/Django architecture, or credentials today?
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <input type="text" id="jarvis-input" class="m-input" style="margin:0;" placeholder="Ask about Python, Django, or projects..." onkeydown="if(event.key==='Enter') sendJarvisChat()">
+      <button class="m-btn m-btn-accent" onclick="sendJarvisChat()" style="flex-shrink:0;">Send</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 /* ============================================================
@@ -3132,8 +3724,9 @@ if (scene) {
 (function menuSheet() {
   const burger = heroSection.querySelector("[data-burger]");
   const LINKS = [
-    ["Driver", "/driver"], ["SEASON", "/season"], ["journal", "/journal"],
-    ["next race", "/next-race"], ["store", "/store"], ["Garage", "/garage"],
+    ["About", "#about"], ["Stack", "#skills"], ["Timeline", "#timeline"],
+    ["Projects", "#projects"], ["Contact", "#contact"], ["Resume & CV", "#resume-modal"],
+    ["Admin Portal", "#admin-modal"],
   ];
   let sheet = null;
   const wide = window.matchMedia("(min-width: 1280px)");
@@ -3162,13 +3755,23 @@ if (scene) {
     sheet.setAttribute("aria-label", "Menu");
     sheet.innerHTML =
       '<div class="sheet-top">' +
-        '<a class="hero-logo" href="/" aria-label="Grido1 Racing Systems">' +
-          '<img src="' + ASSET_BASE_URL + '/hero/ui/grido1-logo.webp" alt="" width="424" height="97">' +
+        '<a class="hero-logo" href="#hero" aria-label="Suryakiran P J">' +
+          '<div class="logo-wrap">' +
+            '<span class="logo-tag">SK</span>' +
+            '<span class="logo-name">SURYAKIRAN P J</span>' +
+            '<span class="logo-sub">[ AI // DEV ]</span>' +
+          '</div>' +
         '</a>' +
         '<button class="sheet-close" type="button" aria-label="Close menu"><span></span><span></span></button>' +
       '</div>' +
       '<nav aria-label="Primary"><ul>' +
-        LINKS.map(([label, href]) => '<li><a href="' + href + '">' + label + '</a></li>').join("") +
+        LINKS.map(([label, href]) => {
+          if (href.startsWith('#resume') || href.startsWith('#admin')) {
+            const mId = href.replace('#', '');
+            return '<li><a href="javascript:void(0)" onclick="openModal(\'' + mId + '\')">' + label + '</a></li>';
+          }
+          return '<li><a href="' + href + '">' + label + '</a></li>';
+        }).join("") +
       '</ul></nav>';
     document.body.appendChild(sheet);
     burger.setAttribute("aria-expanded", "true");
@@ -4580,21 +5183,21 @@ const YEAR_RESTING = 0.4;
 const YEAR_HOLD = 2200;
 
 const TIMELINE = [
-  { year: "2012", frame: "centre", align: null, copyWidth: 228,
-    lead: "The first kart.", copy: " At six, Kimi discovered karting — turning a childhood curiosity into something of his own.",
-    alt: "Kimi in kart overalls in the paddock, aged six" },
-  { year: "2015", frame: "side", align: "right", alt: "Kimi holding a karting trophy at sunset" },
-  { year: "2019", frame: "centre", align: null, copyWidth: 272,
-    lead: "Finding his people.", copy: " Kimi joined the Mercedes Junior Programme, marking his first major step into professional motorsport.",
-    alt: "Kimi signing with the Mercedes junior team" },
-  { year: "2021", frame: "side", align: "left", alt: "Kimi beside a single-seater in the garage" },
-  { year: "2024", frame: "centre", align: null, copyWidth: 278,
-    lead: "The year everything changed.", copy: " Formula 2 brought Kimi closer to F1, while Mercedes confirmed him as their future race driver.",
-    alt: "Kimi walking the pit lane in Mercedes kit" },
-  { year: "2025", frame: "side", align: "right", alt: "Kimi in the Mercedes garage" },
-  { year: "2026", frame: "centre", align: null, copyWidth: 284,
-    lead: "From karts to f1.", copy: " Kimi is now racing at the highest level, with Bologna still his anchor — family, home and life beyond racing.",
-    alt: "The Mercedes-AMG F1 car on track" },
+  { year: "2023", frame: "centre", align: null, copyWidth: 270,
+    lead: "Academic Rigor.", copy: " Began B.Sc Computer Science at KMM College (Coursework Completed 2023-2026). Mastered data structures, algorithms, and OOP fundamentals.",
+    alt: "B.Sc Computer Science Academic Milestone" },
+  { year: "2024", frame: "side", align: "right", alt: "Python Django Full Stack Specialization" },
+  { year: "2024", frame: "centre", align: null, copyWidth: 280,
+    lead: "Full-Stack Specialization.", copy: " Completed intensive 6-Month professional program at Avodha. Built scalable Django REST Framework APIs, PostgreSQL databases, and token auth.",
+    alt: "Avodha Python Full Stack Immersion" },
+  { year: "2025", frame: "side", align: "left", alt: "Autonomous AI & Vector Search" },
+  { year: "2025", frame: "centre", align: null, copyWidth: 285,
+    lead: "Agentic AI & Vector Search.", copy: " Architected autonomous multi-agent pipelines with LangChain and vector retrieval (ChromaDB) to automate document analysis and transaction matching.",
+    alt: "Multi-Agent System Engineering" },
+  { year: "2026", frame: "side", align: "right", alt: "Forward Deployed Systems Architect" },
+  { year: "2026", frame: "centre", align: null, copyWidth: 290,
+    lead: "Forward Deployed Systems.", copy: " Shipped production financial systems: FinSight AI, PayMatch AI, and FinSim. High-throughput Django backends and AI-integrated workflows.",
+    alt: "Production Financial Engineering" },
 ];
 
 (function timelineBlock() {
@@ -4751,11 +5354,11 @@ const CALENDAR = {
   live: { left: 669, right: 781, top: 32, bottom: 113 },
 };
 const CAL_ROUNDS = [
-  { round: "round 11", name: "austrian gp", date: "29 jun", x: 347, width: 100, marker: "p6" },
-  { round: "round 12", name: "british gp", date: "12 jul", x: 511, width: 100, marker: "p4" },
-  { round: "round 13", name: "belgian gp", date: "27 jul", x: 675, width: 100, marker: "live" },
-  { round: "round 14", name: "hungarian gp", date: "03 aug", x: 839, width: 114, marker: "ring" },
-  { round: "round 15", name: "dutch gp", date: "31 aug", x: 1017, width: 76, marker: "ring" },
+  { round: "module 01", name: "finsight ai", date: "rag engine", x: 347, width: 100, marker: "live" },
+  { round: "module 02", name: "paymatch ai", date: "agents", x: 511, width: 100, marker: "prod" },
+  { round: "module 03", name: "finsim", date: "monte carlo", x: 675, width: 100, marker: "p1" },
+  { round: "module 04", name: "django drf", date: "postgresql", x: 839, width: 114, marker: "fast" },
+  { round: "module 05", name: "b.sc cs", date: "kmm college", x: 1017, width: 76, marker: "grad" },
 ];
 const BRACKET_PATH = "M0 0.5H10V10.5";
 const CARD_DELAY = 560;
@@ -4839,10 +5442,10 @@ const ROW_STAGGER = 90;
   });
 
   const STATS = [
-    { icon: "icon-flag", label: "last result", figure: "P4" },
-    { icon: "icon-bars", label: "points gained", figure: "+12" },
-    { icon: "icon-trophy", label: "championship", figure: "P1" },
-    { icon: "icon-gauge", label: "points", figure: "118" },
+    { icon: "icon-flag", label: "latest shipped", figure: "AI" },
+    { icon: "icon-bars", label: "system uptime", figure: "99.9%" },
+    { icon: "icon-trophy", label: "reconciliation", figure: "99.4%" },
+    { icon: "icon-gauge", label: "test coverage", figure: "95%" },
   ];
 
   const statRows = STATS.map((stat, i) => {
@@ -4864,7 +5467,7 @@ const ROW_STAGGER = 90;
     meetFrame +
     '<dl class="pd-col pd-meet-col" style="left:var(--meet-left, ' + COLUMN_LEFT + ');top:var(--meet-top, ' + u(43) + ');width:' + COLUMN_WIDTH + '"' +
       ' data-rise data-rise-delay="410" data-rise-y="0.5rem" data-rise-cfg="ROW" data-rise-gate="paddock">' +
-      '<dt><b>hungarian gp</b></dt><dd>silverstone</dd><dd>july 12, 2026</dd>' +
+      '<dt><b>CORE ARCHITECTURE</b></dt><dd>PYTHON 3 · DJANGO 5</dd><dd>CHROMADB · LANGCHAIN</dd>' +
     '</dl>' +
     statsFrame +
     '<div class="pd-col pd-stats-col" style="left:var(--stats-left, ' + COLUMN_LEFT + ');top:calc(' + u(147) + ' + var(--stats-drop, 0px));width:var(--stats-col-w, ' + COLUMN_WIDTH + ')">' +
@@ -4977,6 +5580,243 @@ const ROW_STAGGER = 90;
    WIRE EVERY ENTRANCE THAT IS NOW IN THE DOCUMENT
    ============================================================ */
 wireEntrance(document);
+
+/* ============================================================
+   SURYAKIRAN P J: MALE VOICE SYNTHESIS, MODALS, CONTACT & ADMIN
+   ============================================================ */
+
+function getTimeGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Good morning";
+  if (h >= 12 && h < 17) return "Good afternoon";
+  if (h >= 17 && h < 21) return "Good evening";
+  return "Good night";
+}
+
+const heroSpeech = `${getTimeGreeting()}! I am Jarvis, personal AI assistant to Suryakiran P J. ` +
+  `Suryakiran is an AI-Integrated Full Stack and Forward Deployed Engineer specializing in Python and Django. ` +
+  `He builds resilient backend architectures, high-performance RESTful APIs, and autonomous agentic AI integrations. ` +
+  `Feel free to review his coursework from KMM College and Avodha, inspect his featured projects, or download his official ATS resume and visual CV.`;
+
+let isSpeaking = false;
+let currentUtterance = null;
+
+function getMaleVoice(voices) {
+  // Guaranteed selection of English male voices
+  const maleKeywords = ['david', 'daniel', 'george', 'guy', 'james', 'richard', 'mark', 'michael', 'uk english male', 'us english male', 'male'];
+  const femaleKeywords = ['samantha', 'victoria', 'zira', 'karen', 'fiona', 'moira', 'tessa', 'female', 'woman'];
+
+  // Priority 1: Match known male name without any female substring
+  for (const v of voices) {
+    if (!v.lang.startsWith('en')) continue;
+    const nameLower = v.name.toLowerCase();
+    if (femaleKeywords.some(f => nameLower.includes(f))) continue;
+    if (maleKeywords.some(m => nameLower.includes(m))) return v;
+  }
+  // Priority 2: Any English voice not marked female
+  for (const v of voices) {
+    if (!v.lang.startsWith('en')) continue;
+    const nameLower = v.name.toLowerCase();
+    if (!femaleKeywords.some(f => nameLower.includes(f))) return v;
+  }
+  return voices[0] || null;
+}
+
+window.toggleJarvisSpeech = function() {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+    alert("Speech synthesis is not supported on this device/browser.");
+    return;
+  }
+
+  if (isSpeaking) {
+    window.speechSynthesis.cancel();
+    setSpeakingState(false);
+  } else {
+    window.speechSynthesis.cancel();
+    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+
+    const utterance = new SpeechSynthesisUtterance(heroSpeech);
+    utterance.rate = 1.0;
+    utterance.pitch = 0.9; // Confident, deep masculine pitch
+
+    const voices = window.speechSynthesis.getVoices();
+    const maleVoice = getMaleVoice(voices);
+    if (maleVoice) utterance.voice = maleVoice;
+
+    utterance.onstart = () => setSpeakingState(true);
+    utterance.onend = () => setSpeakingState(false);
+    utterance.onerror = () => setSpeakingState(false);
+
+    currentUtterance = utterance;
+    window.speechSynthesis.speak(utterance);
+  }
+};
+
+function setSpeakingState(speaking) {
+  isSpeaking = speaking;
+  const pill = document.getElementById('jarvis-speaking-pill');
+  const sub = document.getElementById('jarvis-sub-status');
+  const btn = document.getElementById('jarvis-mute-btn');
+
+  if (pill) pill.style.display = speaking ? 'inline-block' : 'none';
+  if (sub) sub.innerText = speaking ? 'Speaking introduction now...' : 'Spoken Audio Intro';
+  if (btn) btn.innerHTML = speaking ? '<span>■ Stop</span>' : '<span>▶ Speak</span>';
+}
+
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    // warm up voices cache
+    window.speechSynthesis.getVoices();
+  };
+}
+
+// Modal Controls
+window.openModal = function(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.add('active');
+    document.documentElement.classList.add('is-locked');
+    if (lenis) lenis.stop();
+  }
+};
+
+window.closeModal = function(id) {
+  const m = document.getElementById(id);
+  if (m) {
+    m.classList.remove('active');
+    document.documentElement.classList.remove('is-locked');
+    if (lenis) lenis.start();
+  }
+};
+
+window.closeOnOverlay = function(e, id) {
+  if (e.target.id === id) closeModal(id);
+};
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+    document.documentElement.classList.remove('is-locked');
+    if (lenis) lenis.start();
+  }
+});
+
+// Admin Dashboard Logic
+window.unlockAdmin = function() {
+  const user = (document.getElementById('admin-user')?.value || '').trim();
+  const pass = (document.getElementById('admin-pass')?.value || '').trim();
+  const errBox = document.getElementById('admin-auth-error');
+
+  if (user === 'admin' && pass === 'surya007') {
+    if (errBox) errBox.style.display = 'none';
+    document.getElementById('admin-login-view').style.display = 'none';
+    document.getElementById('admin-panel-view').style.display = 'block';
+    renderAdminMessages();
+  } else {
+    if (errBox) errBox.style.display = 'block';
+  }
+};
+
+window.logoutAdmin = function() {
+  document.getElementById('admin-panel-view').style.display = 'none';
+  document.getElementById('admin-login-view').style.display = 'block';
+  const pass = document.getElementById('admin-pass');
+  if (pass) pass.value = '';
+};
+
+function renderAdminMessages() {
+  const container = document.getElementById('admin-messages-list');
+  if (!container) return;
+  const messages = JSON.parse(localStorage.getItem('portfolio_contact_messages') || '[]');
+  if (messages.length === 0) {
+    container.innerHTML = '<div style="font-size:12.5px;color:var(--raw-color-steel-400);">No contact transmissions logged yet. System running nominal.</div>';
+    return;
+  }
+  container.innerHTML = messages.map((m, i) =>
+    `<div style="padding:10px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--accent);font-weight:700;">
+        <span>${escapeHtml(m.name)} &bull; ${escapeHtml(m.email)}</span>
+        <span style="color:var(--raw-color-steel-400);">${new Date(m.date).toLocaleDateString()}</span>
+      </div>
+      <div style="font-size:12.5px;color:#ffffff;margin-top:4px;">${escapeHtml(m.message)}</div>
+    </div>`
+  ).join('');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' })[m]);
+}
+
+// Contact Form Submission
+window.handleContactSubmit = function(e) {
+  e.preventDefault();
+  const name = document.getElementById('contact-name')?.value.trim();
+  const email = document.getElementById('contact-email')?.value.trim();
+  const msg = document.getElementById('contact-msg')?.value.trim();
+  const alertBox = document.getElementById('contact-alert');
+
+  if (!name || !email || !msg) return;
+
+  const messages = JSON.parse(localStorage.getItem('portfolio_contact_messages') || '[]');
+  messages.unshift({ name, email, message: msg, date: new Date().toISOString() });
+  localStorage.setItem('portfolio_contact_messages', JSON.stringify(messages));
+
+  if (alertBox) {
+    alertBox.innerText = `Transmission confirmed from ${name}. Logged to administrator dispatch.`;
+    alertBox.style.display = 'block';
+    setTimeout(() => { alertBox.style.display = 'none'; }, 6000);
+  }
+
+  // Also POST to backend API if active
+  fetch('/api/contact/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, message: msg })
+  }).catch(() => { /* offline / static fallback handled */ });
+
+  document.getElementById('contact-name').value = '';
+  document.getElementById('contact-email').value = '';
+  document.getElementById('contact-msg').value = '';
+};
+
+// Jarvis Chat Modal Logic
+window.sendJarvisChat = function() {
+  const input = document.getElementById('jarvis-input');
+  const log = document.getElementById('jarvis-chat-log');
+  if (!input || !log) return;
+  const q = input.value.trim();
+  if (!q) return;
+
+  // Append user message
+  const userMsg = document.createElement('div');
+  userMsg.style.cssText = "background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:8px 12px;font-size:13px;color:#ffffff;align-self:flex-end;max-width:85%;";
+  userMsg.innerText = q;
+  log.appendChild(userMsg);
+  input.value = '';
+
+  const qLower = q.toLowerCase();
+  let reply = "I am Jarvis, AI assistant to Suryakiran P J. Suryakiran is an AI-Integrated Full Stack & Forward Deployed Engineer specializing in Python, Django, PostgreSQL, and autonomous agents.";
+
+  if (qLower.includes('project') || qLower.includes('finsight') || qLower.includes('paymatch') || qLower.includes('finsim')) {
+    reply = "Suryakiran's featured projects include: 1) FinSight AI (predictive cash-flow forecasting using Django and LLM reasoning), 2) PayMatch AI (multi-agent reconciliation pipeline with vector search), and 3) FinSim (Monte Carlo financial stress testing simulator).";
+  } else if (qLower.includes('education') || qLower.includes('college') || qLower.includes('degree') || qLower.includes('coursework')) {
+    reply = "Suryakiran completed Coursework (2023–2026) for B.Sc Computer Science at KMM College (Thrikkakara), and completed a 6-month intensive Python Django Full Stack specialization at Avodha (Vyttila, Ernakulam).";
+  } else if (qLower.includes('skill') || qLower.includes('tech') || qLower.includes('python') || qLower.includes('django')) {
+    reply = "Suryakiran's core technical stack includes Python 3, Django 5, Django REST Framework (DRF), PostgreSQL, Celery, Redis, LangChain, ChromaDB, FastAPI, Docker, and React 19.";
+  } else if (qLower.includes('contact') || qLower.includes('email') || qLower.includes('phone') || qLower.includes('hire')) {
+    reply = "You can contact Suryakiran directly via email at suryakiranpjineesh@gmail.com, or phone at +91 8129867662. He is available for full-time Software Engineer positions and Agentic AI contracts.";
+  }
+
+  setTimeout(() => {
+    const jarvisMsg = document.createElement('div');
+    jarvisMsg.style.cssText = "background:rgba(2,210,227,0.08);border:1px solid rgba(2,210,227,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:#e5e5e5;max-width:92%;";
+    jarvisMsg.innerText = reply;
+    log.appendChild(jarvisMsg);
+    log.scrollTop = log.scrollHeight;
+  }, 400);
+};
+
 </script>
 </body>
 </html>
