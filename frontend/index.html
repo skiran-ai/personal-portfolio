@@ -1033,7 +1033,7 @@ html.is-locked { position: relative; overflow: hidden; height: 100%; }
           <!-- src is set only when WebGL is unavailable: requesting person-diffuse
                without CORS here would poison the cache for the scene's own load. -->
           <img class="hf-lines" data-src="hero/ui/backdrop-lines.svg" alt="" width="1440" height="801">
-          <img class="hf-person" data-src="hero/scene/person-diffuse.webp" crossorigin="anonymous" alt="" width="2048" height="2048">
+          <img class="hf-person" data-src="/assets/hero/scene/person-diffuse.webp" crossorigin="anonymous" alt="" width="2048" height="2048">
         </div>
 
         <div class="hero-figbox" aria-hidden="true"><div class="hero-fitbox" data-hero-box></div></div>
@@ -2640,10 +2640,11 @@ class HeroScene {
   async load() {
     const { LinearMipmapLinearFilter, PMREMGenerator, RepeatWrapping, SRGBColorSpace, TextureLoader } = THREE;
     const textureLoader = new TextureLoader();
-    const loadTexture = (file, srgb = false, forGltf = false) =>
-      new Promise((resolve, reject) => {
+    const loadTexture = (file, srgb = false, forGltf = false) => {
+      const url = file.startsWith("/") || file.startsWith("http") ? file : (ASSETS + "/" + file);
+      return new Promise((resolve, reject) => {
         textureLoader.load(
-          ASSETS + "/" + file,
+          url,
           (texture) => {
             if (srgb) texture.colorSpace = SRGBColorSpace;
             if (forGltf) texture.flipY = false;
@@ -2652,9 +2653,10 @@ class HeroScene {
             resolve(texture);
           },
           undefined,
-          () => { reportAssetFailure(ASSETS + "/" + file, "scene texture"); reject(new Error(file)); },
+          (err) => { reportAssetFailure(url, "scene texture"); reject(err || new Error(file)); },
         );
       });
+    };
 
     const dracoLoader = new DRACOLoader();
     dracoLoader.setDecoderPath(DRACO_PATH);
@@ -2668,9 +2670,9 @@ class HeroScene {
           reportAssetFailure(ASSETS + "/studio-light.hdr", "studio HDR"); throw error;
         }),
         Promise.all([
-          loadTexture("person-diffuse.webp", true),
+          loadTexture("/assets/hero/scene/person-diffuse.webp", true),
           loadTexture("person-depth.webp"),
-          loadTexture("person-alpha.webp"),
+          loadTexture("/assets/hero/scene/person-alpha.webp"),
           loadTexture("person-normal.webp"),
         ]),
         gltfLoader.loadAsync(ASSETS + "/helmet3.glb").catch((error) => {
@@ -3029,7 +3031,8 @@ if (scene) {
   }, () => scene.tier.frameInterval);
 } else {
   for (const img of heroFallback.querySelectorAll("img[data-src]")) {
-    img.src = ASSET_BASE_URL + "/" + img.dataset.src;
+    const s = img.dataset.src;
+    img.src = s.startsWith("/") || s.startsWith("http") ? s : (ASSETS + "/" + s);
   }
   heroFallback.classList.add("on");
 }
