@@ -27,13 +27,13 @@ export default function Hero({
     <section
       id="hero"
       style={{
-        minHeight: 'calc(100dvh - 80px)',
+        minHeight: 'calc(100dvh - 76px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         position: 'relative',
         zIndex: 10,
-        padding: 'clamp(42px, 7vh, 88px) clamp(16px, 4vw, 40px) clamp(40px, 6vh, 72px)',
+        padding: 'clamp(16px, 2.6vh, 38px) clamp(16px, 4vw, 40px) clamp(20px, 3vh, 42px)',
       }}
     >
       <div className="container-shell">
@@ -42,56 +42,59 @@ export default function Hero({
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 330px), 1fr))',
             alignItems: 'center',
-            gap: 'clamp(32px, 5vw, 72px)',
+            gap: 'clamp(24px, 4vw, 60px)',
           }}
         >
           {/* Left Column */}
           <div>
-            <div className="section-index-pill" style={{ marginBottom: '20px' }}>
+            <div className="section-index-pill" style={{ marginBottom: '12px' }}>
               <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981' }} />
               <span>FDE // PYTHON · DJANGO · AGENTIC AI</span>
             </div>
 
             <h1
               style={{
-                fontSize: 'clamp(2.35rem, 5vw, 4.35rem)',
+                fontSize: 'clamp(2.1rem, 4.3vw, 3.7rem)',
                 fontWeight: '800',
-                lineHeight: '1.06',
-                marginBottom: '16px',
+                lineHeight: '1.08',
+                marginBottom: '10px',
                 color: '#ffffff',
               }}
             >
-              Engineering{' '}
-              <span className="font-serif-accent" style={{ color: 'var(--cyan)', fontSize: '1.08em' }}>
-                verifiable
-              </span>
-              <br />
               <span className="gradient-text-cyan">Suryakiran P J</span>
+              <br />
+              <span style={{ fontSize: '0.62em', fontWeight: '700', color: '#f1f5f9', display: 'inline-block', marginTop: '4px' }}>
+                Engineering{' '}
+                <span className="font-serif-accent" style={{ color: 'var(--cyan)', fontSize: '1.18em' }}>
+                  verifiable
+                </span>{' '}
+                AI &amp; Django systems
+              </span>
             </h1>
 
             <p
               style={{
-                fontSize: 'clamp(1.05rem, 1.9vw, 1.3rem)',
+                fontSize: 'clamp(0.95rem, 1.5vw, 1.12rem)',
                 fontWeight: '600',
                 color: '#e2e8f0',
-                marginBottom: '14px',
-                lineHeight: '1.4',
+                marginBottom: '8px',
+                lineHeight: '1.35',
               }}
             >
               Python, Django REST Framework &amp;{' '}
-              <span style={{ color: 'var(--cyan)' }}>Schema-Grounded AI Systems</span>
+              <span style={{ color: 'var(--cyan)' }}>Schema-Grounded AI Workflows</span>
             </p>
 
             <p
               style={{
-                fontSize: '0.98rem',
+                fontSize: '0.92rem',
                 color: 'var(--text-secondary)',
-                lineHeight: '1.7',
-                maxWidth: '580px',
-                marginBottom: '22px',
+                lineHeight: '1.58',
+                maxWidth: '560px',
+                marginBottom: '14px',
               }}
             >
-              I build deterministic Django backends, reactive React interfaces, and structured Gemini AI workflows you can
+              Deterministic Django backends, reactive React interfaces, and structured Gemini AI workflows you can
               test directly inside this portfolio — no static mockups, no unverifiable buzzwords.
             </p>
 
@@ -100,8 +103,8 @@ export default function Hero({
               style={{
                 display: 'flex',
                 flexWrap: 'wrap',
-                gap: '10px',
-                marginBottom: '26px',
+                gap: '8px',
+                marginBottom: '16px',
               }}
             >
               <span className="tech-pill tech-pill-emerald">
@@ -118,14 +121,14 @@ export default function Hero({
             <div
               className="liquid-glass liquid-glass-border"
               style={{
-                borderRadius: '18px',
-                padding: '14px clamp(12px, 3vw, 18px)',
+                borderRadius: '16px',
+                padding: '10px clamp(12px, 2.5vw, 16px)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 flexWrap: 'wrap',
-                gap: '12px',
-                marginBottom: '28px',
+                gap: '10px',
+                marginBottom: '16px',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -213,7 +216,7 @@ export default function Hero({
             </div>
 
             {/* Public Action Buttons */}
-            <div className="hero-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '14px', marginBottom: '32px' }}>
+            <div className="hero-buttons" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '18px' }}>
               <a href="#projects" className="btn-primary">
                 <span>Try Live Project Sandboxes</span>
                 <ArrowRight size={17} />
@@ -231,8 +234,8 @@ export default function Hero({
             </div>
 
             {/* Socials */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)', fontWeight: '500' }}>Channels:</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', fontWeight: '500' }}>Channels:</span>
               <a href="https://github.com/skiran-ai" target="_blank" rel="noreferrer" title="GitHub Profile (@skiran-ai)" className="hero-social-btn">
                 <GithubIcon size={18} />
               </a>
@@ -249,15 +252,15 @@ export default function Hero({
           </div>
 
           {/* Right Column */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', position: 'relative' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', position: 'relative' }}>
             <div
               onMouseMove={handlePhotoMouseMove}
               onMouseLeave={handlePhotoMouseLeave}
               style={{
                 position: 'relative',
                 width: '100%',
-                maxWidth: 'clamp(280px, 28vw, 370px)',
-                height: 'clamp(320px, 34vw, 430px)',
+                maxWidth: 'clamp(250px, 25vw, 340px)',
+                height: 'clamp(255px, 39vh, 360px)',
                 perspective: '1000px',
               }}
             >
@@ -266,11 +269,11 @@ export default function Hero({
                   position: 'relative',
                   width: '100%',
                   height: '100%',
-                  borderRadius: '24px',
+                  borderRadius: '22px',
                   overflow: 'hidden',
-                  background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.9) 0%, rgba(7, 9, 14, 0.95) 100%)',
-                  border: '1.5px solid rgba(0, 242, 254, 0.35)',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+                  background: '#070b14',
+                  border: '1.5px solid rgba(34, 211, 238, 0.34)',
+                  boxShadow: '0 24px 48px -12px rgba(0, 0, 0, 0.78), 0 0 36px rgba(34, 211, 238, 0.08)',
                   transform: `rotateY(${photoTilt.x}deg) rotateX(${photoTilt.y}deg)`,
                   transition: 'transform 0.15s ease-out',
                 }}
@@ -278,31 +281,31 @@ export default function Hero({
                 <img
                   src="/suryakiran.jpg"
                   alt="Suryakiran P J"
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 15%' }}
                 />
 
                 <div
                   className="liquid-glass"
                   style={{
                     position: 'absolute',
-                    bottom: '14px',
-                    left: '14px',
-                    right: '14px',
-                    padding: '12px 14px',
-                    borderRadius: '14px',
+                    bottom: '12px',
+                    left: '12px',
+                    right: '12px',
+                    padding: '10px 14px',
+                    borderRadius: '13px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    border: '1px solid rgba(0, 242, 254, 0.3)',
+                    border: '1px solid rgba(34, 211, 238, 0.28)',
                   }}
                 >
                   <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: '700', color: '#fff' }}>Suryakiran P J</div>
-                    <div style={{ fontSize: '0.72rem', color: 'var(--cyan)' }}>Python • Django • AI Systems</div>
+                    <div style={{ fontSize: '0.86rem', fontWeight: '700', color: '#fff' }}>Suryakiran P J</div>
+                    <div style={{ fontSize: '0.7rem', color: 'var(--cyan)' }}>Python • Django • AI Systems</div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#10b981' }} />
-                    <span style={{ fontSize: '0.72rem', color: '#10b981', fontWeight: '600' }}>Open to Work</span>
+                    <span style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: '600' }}>Open to Work</span>
                   </div>
                 </div>
               </div>
@@ -312,28 +315,28 @@ export default function Hero({
               className="liquid-glass liquid-glass-border"
               style={{
                 width: '100%',
-                maxWidth: 'clamp(280px, 28vw, 370px)',
-                borderRadius: '20px',
-                padding: '12px 16px',
+                maxWidth: 'clamp(250px, 25vw, 340px)',
+                borderRadius: '18px',
+                padding: '10px 14px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '12px',
+                gap: '10px',
               }}
             >
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="font-mono-tag" style={{ fontSize: '0.68rem', color: 'var(--cyan)', fontWeight: '700' }}>
+                <div className="font-mono-tag" style={{ fontSize: '0.66rem', color: 'var(--cyan)', fontWeight: '700' }}>
                   BACKEND &amp; AI RUNTIME
                 </div>
-                <div style={{ fontSize: '0.95rem', fontWeight: '800', color: '#fff', margin: '3px 0' }}>
+                <div style={{ fontSize: '0.92rem', fontWeight: '800', color: '#fff', margin: '2px 0' }}>
                   Python 3 + Django
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                <div style={{ fontSize: '0.73rem', color: 'var(--text-secondary)', lineHeight: '1.35' }}>
                   DRF APIs, Deterministic Engines &amp; Gemini Agents
                 </div>
               </div>
 
-              <div style={{ width: 'clamp(88px, 22vw, 114px)', height: 'clamp(88px, 22vw, 114px)', flexShrink: 0 }}>
+              <div style={{ width: 'clamp(72px, 16vw, 88px)', height: 'clamp(72px, 16vw, 88px)', flexShrink: 0 }}>
                 <Python3DLogo />
               </div>
             </div>
@@ -341,7 +344,7 @@ export default function Hero({
         </div>
 
         {/* Scroll Cue */}
-        <div style={{ marginTop: '48px', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginTop: 'clamp(16px, 2.5vh, 32px)', display: 'flex', justifyContent: 'center' }}>
           <a
             href="#about"
             style={{
