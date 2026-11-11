@@ -21,5 +21,5 @@ Or manually:
 
 ## Production Deployment
 
-- **Frontend (Vercel `skiran.vercel.app`)**: Root `vercel.json` automatically builds `frontend/` into `frontend/dist`. Set `VITE_API_BASE=https://<your-backend-host>/api` in Vercel environment variables.
+- **Frontend (Vercel `skiran.vercel.app`)**: With Vercel Project **Root Directory** set to `frontend`, `vercel.json` uses the Vite preset (`npm install`, `npm run build`, output `dist`). Set `VITE_API_BASE=https://<your-backend-host>/api` in Vercel environment variables.
 - **Backend (Render / Railway / Fly.io)**: Deploy `backend/` with `pip install -r requirements-prod.txt`, start command from `backend/Procfile`, `DJANGO_DEBUG=False`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `CORS_ALLOWED_ORIGINS=https://skiran.vercel.app`, `DATABASE_URL` (PostgreSQL), and `GEMINI_API_KEY`.
