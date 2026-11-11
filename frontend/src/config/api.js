@@ -1,30 +1,32 @@
 /**
- * Centralized API configuration for Suryakiran's Portfolio
- * Ensures seamless API resolution across:
- * - Desktop Localhost (http://localhost:5173 -> /api or 127.0.0.1:8000)
- * - Mobile Phones, Tablets & other devices on the same Wi-Fi (e.g. http://192.168.1.25:5173 -> /api proxy)
- * - All Browsers: Google Chrome, Opera, Opera Mini, Safari iOS, Firefox, Edge, Brave
- * - Production deployments & reverse proxies
+ * Centralized API configuration for Suryakiran's Portfolio.
+ * Priority:
+ * 1. Explicit VITE_API_BASE (used in production deployments such as Vercel -> Render/Railway Django API)
+ * 2. Local Vite dev proxy ('/api' when running on :5173)
+ * 3. Direct LAN host Django backend (:8000/api)
  */
 
 export const getApiBase = () => {
+  const configured = import.meta.env.VITE_API_BASE;
+  if (configured && configured.trim()) {
+    return configured.trim().replace(/\/+$/, '');
+  }
+
   if (typeof window !== 'undefined' && window.location) {
     const { port, hostname, protocol } = window.location;
 
-    // When served via Vite dev server (port 5173) or production relative path,
-    // using '/api' leverages the Vite proxy / web server proxy, ensuring requests
-    // route correctly from ANY device (phones, tablets, PCs) without CORS issues.
-    if (port === '5173' || !port || port === '80' || port === '443') {
+    if (port === '5173') {
       return '/api';
     }
 
-    // Direct access to an IP or custom domain on another port:
     if (hostname && hostname !== 'localhost' && hostname !== '127.0.0.1') {
+      if (!port || port === '80' || port === '443') {
+        return '/api';
+      }
       return `${protocol}//${hostname}:8000/api`;
     }
   }
 
-  // Local fallback
   return 'http://127.0.0.1:8000/api';
 };
 

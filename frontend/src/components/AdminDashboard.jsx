@@ -1,44 +1,83 @@
-import React, { useState, useEffect } from 'react';
-import { X, Lock, Key, Plus, Trash2, Mail, Bot, Check, AlertCircle, RefreshCw, Layers, Terminal } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  X,
+  Lock,
+  Key,
+  Plus,
+  Trash2,
+  Mail,
+  Bot,
+  Check,
+  AlertCircle,
+  RefreshCw,
+  Layers,
+  Terminal,
+  Edit3,
+  LogOut,
+  BarChart3,
+} from 'lucide-react';
 import { GithubIcon } from './SocialIcons';
-import confetti from 'canvas-confetti';
 import { API_BASE } from '../config/api';
 
-export default function AdminDashboard({ isOpen, onClose, onProjectCreated, projects, onDeleteProject, initialTab = 'add' }) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const EMPTY_FORM = {
+  id: null,
+  title: '',
+  tagline: '',
+  description: '',
+  problem_statement: '',
+  architecture_summary: '',
+  engineering_tradeoffs: '',
+  api_contract_sample: '',
+  sandbox_slug: '',
+  technologies: '',
+  github_url: '',
+  live_url: '',
+  image_url: '',
+  featured: false,
+};
+
+export default function AdminDashboard({
+  isOpen,
+  onClose,
+  onProjectsChanged,
+  projects = [],
+  onDeleteProject,
+  adminToken,
+  onLoginSuccess,
+  onLogout,
+  initialTab = 'add',
+}) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [authError, setAuthError] = useState('');
+  const [authLoading, setAuthLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(initialTab);
 
-  // New Project Form State
-  const [newProject, setNewProject] = useState({
-    title: '',
-    description: '',
-    technologies: '',
-    github_url: '',
-    live_url: '',
-    image_url: '',
-    featured: false
-  });
+  const [projectForm, setProjectForm] = useState(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState(null);
 
-  // Messages Inbox State
   const [messages, setMessages] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
 
-  // Jarvis Test Console State
   const [jarvisTestPrompt, setJarvisTestPrompt] = useState('');
   const [jarvisTestResponse, setJarvisTestResponse] = useState('');
   const [testingJarvis, setTestingJarvis] = useState(false);
 
-  const fetchMessages = async () => {
+  const [analytics, setAnalytics] = useState(null);
+  const [loadingAnalytics, setLoadingAnalytics] = useState(false);
+
+  const isAuthenticated = Boolean(adminToken);
+
+  const fetchMessages = useCallback(async () => {
+    if (!adminToken) return;
     setLoadingMessages(true);
     try {
-      const res = await fetch(`${API_BASE}/contact/`);
+      const res = await fetch(`${API_BASE}/contact/`, {
+        headers: { Authorization: `Bearer ${adminToken}` },
+      });
       const data = await res.json();
-      if (data.status === 'success') {
+      if (res.ok && data.status === 'success') {
         setMessages(data.messages || []);
       }
     } catch (err) {
@@ -46,99 +85,150 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
     } finally {
       setLoadingMessages(false);
     }
-  };
+  }, [adminToken]);
 
-  useEffect(() => {
-    if (initialTab) {
-      setActiveTab(initialTab);
+  const fetchAnalytics = useCallback(async () => {
+    if (!adminToken) return;
+    setLoadingAnalytics(true);
+    try {
+      const res = await fetch(`${API_BASE}/analytics/summary/`, {
+        headers: { Authorization: `Bearer ${adminToken}` },
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        setAnalytics(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch analytics:', err);
+    } finally {
+      setLoadingAnalytics(false);
     }
-  }, [initialTab]);
+  }, [adminToken]);
 
   useEffect(() => {
     if (isAuthenticated && activeTab === 'inbox') {
       fetchMessages();
+    } else if (isAuthenticated && activeTab === 'analytics') {
+      fetchAnalytics();
     }
-  }, [isAuthenticated, activeTab]);
+  }, [isAuthenticated, activeTab, fetchMessages, fetchAnalytics]);
 
-  const handleLogin = (e) => {
-    e?.preventDefault();
-    if (username.trim() === 'admin' && password === 'surya007') {
-      setIsAuthenticated(true);
-      setAuthError('');
-    } else {
-      setAuthError('Access denied. Invalid administrator credentials.');
+  const handleDeleteMessage = async (msgId) => {
+    if (!adminToken || !window.confirm('Delete this inquiry message?')) return;
+    try {
+      const res = await fetch(`${API_BASE}/contact/${msgId}/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${adminToken}` },
+      });
+      if (res.ok) {
+        setMessages((prev) => prev.filter((m) => m.id !== msgId));
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 
+  const handleLogin = async (e) => {
+    e?.preventDefault();
+    setAuthError('');
+    setAuthLoading(true);
+    try {
+      const res = await fetch(`${API_BASE}/auth/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: username.trim(), password }),
+      });
+      const data = await res.json();
+      if (res.ok && data.authenticated && data.token) {
+        setPassword('');
+        onLoginSuccess?.(data.token);
+      } else {
+        setAuthError(data.message || 'Access denied. Invalid credentials.');
+      }
+    } catch {
+      setAuthError('Cannot reach Django backend API to verify administrator session.');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
 
-
-  const handleCreateProject = async (e) => {
+  const handleSaveProject = async (e) => {
     e.preventDefault();
-    if (!newProject.title.trim() || !newProject.description.trim()) {
+    if (!projectForm.title.trim() || !projectForm.description.trim()) {
       setSubmitMessage({ type: 'error', text: 'Title and Description are required.' });
       return;
     }
 
     setSubmitting(true);
     setSubmitMessage(null);
+    const isEditing = Boolean(projectForm.id);
+    const url = isEditing ? `${API_BASE}/projects/${projectForm.id}/` : `${API_BASE}/projects/`;
+    const method = isEditing ? 'PUT' : 'POST';
 
     try {
-      const res = await fetch(`${API_BASE}/projects/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProject)
+      const res = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${adminToken}`,
+        },
+        body: JSON.stringify(projectForm),
       });
-
       const data = await res.json();
-
-      if (data.status === 'success') {
-        try {
-          confetti({
-            particleCount: 80,
-            spread: 70,
-            origin: { y: 0.6 }
-          });
-        } catch (e) {
-          // Safe fallback for canvas-restricted environments
-        }
-
-        setSubmitMessage({ type: 'success', text: `Project "${newProject.title}" published live to portfolio!` });
-        setNewProject({
-          title: '',
-          description: '',
-          technologies: '',
-          github_url: '',
-          live_url: '',
-          image_url: '',
-          featured: false
+      if (res.ok && data.status === 'success') {
+        setSubmitMessage({
+          type: 'success',
+          text: isEditing
+            ? `Updated "${projectForm.title}" successfully.`
+            : `Published "${projectForm.title}" live to portfolio.`,
         });
-        onProjectCreated();
+        setProjectForm(EMPTY_FORM);
+        onProjectsChanged?.();
       } else {
-        setSubmitMessage({ type: 'error', text: data.message || 'Failed to create project.' });
+        setSubmitMessage({ type: 'error', text: data.message || 'Failed to save project.' });
       }
-    } catch (err) {
+    } catch {
       setSubmitMessage({ type: 'error', text: 'Network error connecting to Django backend API.' });
     } finally {
       setSubmitting(false);
     }
   };
 
+  const startEditingProject = (proj) => {
+    setProjectForm({
+      id: proj.id,
+      title: proj.title || '',
+      tagline: proj.tagline || '',
+      description: proj.description || '',
+      problem_statement: proj.problem_statement || '',
+      architecture_summary: proj.architecture_summary || '',
+      engineering_tradeoffs: proj.engineering_tradeoffs || '',
+      api_contract_sample: proj.api_contract_sample || '',
+      sandbox_slug: proj.sandbox_slug || '',
+      technologies: Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies || '',
+      github_url: proj.github_url || '',
+      live_url: proj.live_url || '',
+      image_url: proj.image_url || '',
+      featured: Boolean(proj.featured),
+    });
+    setSubmitMessage(null);
+    setActiveTab('add');
+  };
+
   const handleTestJarvis = async (e) => {
     e.preventDefault();
     if (!jarvisTestPrompt.trim()) return;
-
     setTestingJarvis(true);
     setJarvisTestResponse('');
-
     try {
       const res = await fetch(`${API_BASE}/jarvis/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: jarvisTestPrompt })
+        body: JSON.stringify({ message: jarvisTestPrompt }),
       });
       const data = await res.json();
-      setJarvisTestResponse(data.reply || 'No response from Jarvis agent.');
-    } catch (err) {
+      setJarvisTestResponse(`[${data.mode || 'unknown'}] ${data.reply || 'No response'}`);
+    } catch {
       setJarvisTestResponse('Error connecting to Jarvis AI backend.');
     } finally {
       setTestingJarvis(false);
@@ -153,416 +243,262 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
         className="glass-panel"
         style={{
           width: '100%',
-          maxWidth: '920px',
-          maxHeight: '94vh',
+          maxWidth: '940px',
+          maxHeight: '94dvh',
           overflowY: 'auto',
-          padding: 'clamp(16px, 3.5vw, 32px)',
-          position: 'relative',
-          background: 'rgba(11, 16, 29, 0.95)',
+          padding: 'clamp(16px, 3.5vw, 30px)',
+          background: 'rgba(11, 16, 29, 0.98)',
           border: '1px solid rgba(0, 242, 254, 0.35)',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(0, 242, 254, 0.15)',
-          borderRadius: 'clamp(16px, 3vw, 24px)'
+          borderRadius: '22px',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header Bar */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid var(--border-subtle)' }}>
+        {/* Header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '22px', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(245, 158, 11, 0.15)',
-              border: '1px solid rgba(245, 158, 11, 0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fbbf24'
-            }}>
+            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'rgba(245, 158, 11, 0.14)', border: '1px solid rgba(245, 158, 11, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24' }}>
               <Terminal size={20} />
             </div>
             <div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: '800', color: '#fff' }}>
-                Embedded Admin Console
-              </h2>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                Live Portfolio Management • Integrated with Python Django REST API
+              <h2 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#fff', margin: 0 }}>Private Admin Console</h2>
+              <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: 0 }}>
+                Server-verified Bearer token authentication • Shortcuts: Ctrl+Shift+A or /admin
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '10px',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <X size={20} />
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {isAuthenticated && (
+              <button
+                type="button"
+                onClick={onLogout}
+                className="btn-secondary"
+                style={{ padding: '7px 12px', fontSize: '0.78rem' }}
+              >
+                <LogOut size={14} />
+                <span>Sign Out</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-subtle)', borderRadius: '10px', color: 'var(--text-secondary)', cursor: 'pointer', padding: '8px' }}
+            >
+              <X size={18} />
+            </button>
+          </div>
         </div>
 
-        {/* Auth Gate */}
         {!isAuthenticated ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', maxWidth: '420px', margin: '0 auto' }}>
-            <div style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '20px',
-              background: 'rgba(245, 158, 11, 0.12)',
-              border: '1px solid rgba(245, 158, 11, 0.35)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#fbbf24',
-              margin: '0 auto 20px auto'
-            }}>
-              <Lock size={28} />
+          <div style={{ padding: '32px 16px', textAlign: 'center', maxWidth: '420px', margin: '0 auto' }}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '18px', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fbbf24', margin: '0 auto 18px' }}>
+              <Lock size={26} />
             </div>
-
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '700', color: '#fff', marginBottom: '8px' }}>
-              Administrator Authentication
-            </h3>
-            <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              Enter security passcode to manage dynamic projects and review recruiter inquiries.
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '6px' }}>Administrator Sign In</h3>
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', marginBottom: '22px' }}>
+              Verified directly by Django backend (`/api/auth/login/`).
             </p>
 
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ textAlign: 'left' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Username</label>
-                <input
-                  type="text"
-                  placeholder="Enter username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="form-input"
-                  required
-                />
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Username</label>
+                <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="form-input" required />
               </div>
-
               <div style={{ textAlign: 'left' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>Password</label>
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="form-input"
-                  autoFocus
-                  required
-                />
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '5px' }}>Password</label>
+                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-input" required />
               </div>
 
               {authError && (
-                <div style={{ color: '#f87171', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '6px', textAlign: 'left' }}>
+                <div style={{ color: '#f87171', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '6px', textAlign: 'left' }}>
                   <AlertCircle size={15} />
                   <span>{authError}</span>
                 </div>
               )}
 
-              <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '6px' }}>
+              <button type="submit" disabled={authLoading} className="btn-primary" style={{ width: '100%' }}>
                 <Key size={16} />
-                <span>Authorize Access</span>
+                <span>{authLoading ? 'Verifying...' : 'Authorize Session'}</span>
               </button>
             </form>
           </div>
         ) : (
-          /* Authenticated Admin Dashboard */
           <div>
-            {/* Real-time Status Badges */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-              gap: '14px',
-              marginBottom: '24px'
-            }}>
-              <div style={{ padding: '14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Live Projects</div>
-                <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--cyan)' }}>{projects.length}</div>
-              </div>
-
-              <div style={{ padding: '14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Backend Engine</div>
-                <div style={{ fontSize: '1rem', fontWeight: '700', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }}></span>
-                  Django 6.1 (Active)
-                </div>
-              </div>
-
-              <div style={{ padding: '14px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Agentic AI Assistant</div>
-                <div style={{ fontSize: '1rem', fontWeight: '700', color: '#c084fc', display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#a855f7' }}></span>
-                  Jarvis Voice Ready
-                </div>
-              </div>
+            {/* Tabs */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
+              {[
+                { key: 'add', label: projectForm.id ? 'Edit Project' : 'Add Project', icon: projectForm.id ? Edit3 : Plus },
+                { key: 'manage', label: `Manage (${projects.length})`, icon: Layers },
+                { key: 'inbox', label: 'Inbox', icon: Mail },
+                { key: 'analytics', label: 'Analytics', icon: BarChart3 },
+                { key: 'jarvis', label: 'Jarvis Sandbox', icon: Bot },
+              ].map((t) => {
+                const Icon = t.icon;
+                const active = activeTab === t.key;
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setActiveTab(t.key)}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: '10px',
+                      background: active ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
+                      border: active ? '1px solid var(--cyan)' : '1px solid transparent',
+                      color: active ? 'var(--cyan)' : 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      fontWeight: '600',
+                      fontSize: '0.84rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                    }}
+                  >
+                    <Icon size={15} />
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Navigation Tabs */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '24px', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '12px' }}>
-              <button
-                onClick={() => setActiveTab('add')}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: '10px',
-                  background: activeTab === 'add' ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
-                  border: activeTab === 'add' ? '1px solid var(--cyan)' : '1px solid transparent',
-                  color: activeTab === 'add' ? 'var(--cyan)' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '0.88rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Plus size={16} />
-                <span>Add Real Project</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('manage')}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: '10px',
-                  background: activeTab === 'manage' ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
-                  border: activeTab === 'manage' ? '1px solid var(--cyan)' : '1px solid transparent',
-                  color: activeTab === 'manage' ? 'var(--cyan)' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '0.88rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Layers size={16} />
-                <span>Manage Projects ({projects.length})</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('inbox')}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: '10px',
-                  background: activeTab === 'inbox' ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
-                  border: activeTab === 'inbox' ? '1px solid var(--cyan)' : '1px solid transparent',
-                  color: activeTab === 'inbox' ? 'var(--cyan)' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '0.88rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Mail size={16} />
-                <span>Inbox Messages</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('jarvis')}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: '10px',
-                  background: activeTab === 'jarvis' ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
-                  border: activeTab === 'jarvis' ? '1px solid var(--cyan)' : '1px solid transparent',
-                  color: activeTab === 'jarvis' ? 'var(--cyan)' : 'var(--text-secondary)',
-                  cursor: 'pointer',
-                  fontWeight: '600',
-                  fontSize: '0.88rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}
-              >
-                <Bot size={16} />
-                <span>Jarvis AI Sandbox</span>
-              </button>
-            </div>
-
-            {/* Tab 1: Add New Project Form */}
             {activeTab === 'add' && (
-              <form onSubmit={handleCreateProject} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+              <form onSubmit={handleSaveProject} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '14px' }}>
                   <div>
-                    <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                      Project Title *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. AI-Powered Inventory & CRM System"
-                      value={newProject.title}
-                      onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
-                      className="form-input"
-                    />
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Project Title *</label>
+                    <input type="text" required value={projectForm.title} onChange={(e) => setProjectForm({ ...projectForm, title: e.target.value })} className="form-input" />
                   </div>
-
                   <div>
-                    <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                      Tech Stack (Comma Separated) *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Python, Django, React, PostgreSQL, AI Agent"
-                      value={newProject.technologies}
-                      onChange={(e) => setNewProject({ ...newProject, technologies: e.target.value })}
-                      className="form-input"
-                    />
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Tagline</label>
+                    <input type="text" placeholder="e.g. Payment Reconciliation Engine" value={projectForm.tagline} onChange={(e) => setProjectForm({ ...projectForm, tagline: e.target.value })} className="form-input" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Tech Stack (Comma Separated)</label>
+                    <input type="text" value={projectForm.technologies} onChange={(e) => setProjectForm({ ...projectForm, technologies: e.target.value })} className="form-input" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Interactive Sandbox Slug (optional)</label>
+                    <input type="text" placeholder="finsight | paymatch | finsim" value={projectForm.sandbox_slug} onChange={(e) => setProjectForm({ ...projectForm, sandbox_slug: e.target.value })} className="form-input" />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                    Project Description *
-                  </label>
-                  <textarea
-                    required
-                    rows={4}
-                    placeholder="Describe the architecture, key problem solved, algorithms, and features..."
-                    value={newProject.description}
-                    onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
-                    className="form-input"
-                    style={{ resize: 'vertical' }}
-                  />
+                  <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Problem Statement &amp; Description *</label>
+                  <textarea required rows={3} value={projectForm.description} onChange={(e) => setProjectForm({ ...projectForm, description: e.target.value, problem_statement: e.target.value })} className="form-input" />
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))', gap: '14px' }}>
                   <div>
-                    <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                      GitHub Repository URL
-                    </label>
-                    <input
-                      type="url"
-                      placeholder="https://github.com/suryakiranpjineesh-bit/project"
-                      value={newProject.github_url}
-                      onChange={(e) => setNewProject({ ...newProject, github_url: e.target.value })}
-                      className="form-input"
-                    />
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Architecture Pipeline Summary</label>
+                    <textarea rows={2} value={projectForm.architecture_summary} onChange={(e) => setProjectForm({ ...projectForm, architecture_summary: e.target.value })} className="form-input" />
                   </div>
-
                   <div>
-                    <label style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px' }}>
-                      Live Demo URL
-                    </label>
-                    <input
-                      type="url"
-                      placeholder="https://your-live-demo.com"
-                      value={newProject.live_url}
-                      onChange={(e) => setNewProject({ ...newProject, live_url: e.target.value })}
-                      className="form-input"
-                    />
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Key Engineering Trade-off</label>
+                    <textarea rows={2} value={projectForm.engineering_tradeoffs} onChange={(e) => setProjectForm({ ...projectForm, engineering_tradeoffs: e.target.value })} className="form-input" />
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px' }}>
-                  <input
-                    type="checkbox"
-                    id="featured"
-                    checked={newProject.featured}
-                    onChange={(e) => setNewProject({ ...newProject, featured: e.target.checked })}
-                    style={{ width: '18px', height: '18px', accentColor: 'var(--cyan)' }}
-                  />
-                  <label htmlFor="featured" style={{ fontSize: '0.9rem', color: '#fff', cursor: 'pointer' }}>
-                    Mark as Featured Project
-                  </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '14px' }}>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Exact GitHub Repository URL</label>
+                    <input type="url" placeholder="https://github.com/skiran-ai/repo-name" value={projectForm.github_url} onChange={(e) => setProjectForm({ ...projectForm, github_url: e.target.value })} className="form-input" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>Live Demo URL</label>
+                    <input type="url" placeholder="https://demo.example.com" value={projectForm.live_url} onChange={(e) => setProjectForm({ ...projectForm, live_url: e.target.value })} className="form-input" />
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <input type="checkbox" id="featured-proj" checked={projectForm.featured} onChange={(e) => setProjectForm({ ...projectForm, featured: e.target.checked })} />
+                  <label htmlFor="featured-proj" style={{ fontSize: '0.86rem', color: '#fff' }}>Mark as Flagship / Featured</label>
                 </div>
 
                 {submitMessage && (
-                  <div style={{
-                    padding: '12px 16px',
-                    borderRadius: '10px',
-                    background: submitMessage.type === 'success' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
-                    border: submitMessage.type === 'success' ? '1px solid #10b981' : '1px solid #ef4444',
-                    color: submitMessage.type === 'success' ? '#34d399' : '#f87171',
-                    fontSize: '0.88rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    {submitMessage.type === 'success' ? <Check size={18} /> : <AlertCircle size={18} />}
+                  <div style={{ padding: '10px 14px', borderRadius: '10px', background: submitMessage.type === 'success' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)', border: submitMessage.type === 'success' ? '1px solid #10b981' : '1px solid #ef4444', color: submitMessage.type === 'success' ? '#34d399' : '#fca5a5', fontSize: '0.84rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {submitMessage.type === 'success' ? <Check size={16} /> : <AlertCircle size={16} />}
                     <span>{submitMessage.text}</span>
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                  <button type="submit" disabled={submitting} className="btn-primary" style={{ flex: 1, padding: '14px' }}>
-                    {submitting ? 'Publishing via Django API...' : '🚀 Publish Project to Live Portfolio'}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button type="submit" disabled={submitting} className="btn-primary" style={{ flex: 1 }}>
+                    {submitting ? 'Saving via Django API...' : projectForm.id ? 'Update Project' : 'Publish Project'}
                   </button>
+                  {projectForm.id && (
+                    <button type="button" className="btn-secondary" onClick={() => setProjectForm(EMPTY_FORM)}>
+                      Cancel Edit
+                    </button>
+                  )}
                 </div>
               </form>
             )}
 
-            {/* Tab 2: Manage Existing Projects */}
             {activeTab === 'manage' && (
-              <div>
-                {projects.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                    No projects found in database. Use "Add Real Project" tab to publish your first project.
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                    {projects.map((proj) => (
-                      <div
-                        key={proj.id}
-                        style={{
-                          padding: '16px 20px',
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          borderRadius: '12px',
-                          border: '1px solid var(--border-subtle)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '16px'
-                        }}
-                      >
-                        <div>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontWeight: '700', color: '#fff', fontSize: '1rem' }}>{proj.title}</span>
-                            {proj.featured && (
-                              <span style={{ fontSize: '0.7rem', padding: '2px 8px', borderRadius: '8px', background: 'rgba(245, 158, 11, 0.2)', color: '#fbbf24' }}>
-                                Featured
-                              </span>
-                            )}
-                          </div>
-                          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                            {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
-                          </div>
-                        </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {projects.map((proj) => (
+                  <div key={proj.id} style={{ padding: '14px 16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                    <div>
+                      <div style={{ fontWeight: '700', color: '#fff' }}>
+                        {proj.title}{' '}
+                        {!proj.has_exact_repo && (
+                          <span style={{ fontSize: '0.7rem', color: '#fbbf24', marginLeft: '6px' }}>• Profile link only (add repo URL)</span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                        {Array.isArray(proj.technologies) ? proj.technologies.join(', ') : proj.technologies}
+                      </div>
+                    </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {proj.github_url && (
-                            <a href={proj.github_url} target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }}>
-                              <GithubIcon size={18} />
-                            </a>
-                          )}
-                          <button
-                            onClick={() => onDeleteProject(proj.id)}
-                            style={{
-                              background: 'rgba(239, 68, 68, 0.15)',
-                              border: '1px solid rgba(239, 68, 68, 0.35)',
-                              color: '#f87171',
-                              padding: '6px 12px',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              fontSize: '0.8rem'
-                            }}
-                          >
-                            <Trash2 size={14} />
-                            <span>Delete</span>
-                          </button>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      {proj.github_url && (
+                        <a href={proj.github_url} target="_blank" rel="noreferrer" style={{ color: 'var(--text-secondary)' }}>
+                          <GithubIcon size={16} />
+                        </a>
+                      )}
+                      <button type="button" onClick={() => startEditingProject(proj)} className="btn-secondary" style={{ padding: '6px 10px', fontSize: '0.76rem' }}>
+                        <Edit3 size={13} />
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteProject?.(proj.id)}
+                        style={{ background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.35)', color: '#f87171', padding: '6px 10px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.76rem', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                      >
+                        <Trash2 size={13} />
+                        <span>Delete</span>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === 'inbox' && (
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                  <span style={{ fontSize: '0.86rem', color: 'var(--text-secondary)' }}>Protected recruiter &amp; visitor inquiries</span>
+                  <button onClick={fetchMessages} style={{ background: 'none', border: 'none', color: 'var(--cyan)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem' }}>
+                    <RefreshCw size={14} /> Refresh
+                  </button>
+                </div>
+                {loadingMessages ? (
+                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading...</div>
+                ) : messages.length === 0 ? (
+                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>Inbox is empty.</div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    {messages.map((msg) => (
+                      <div key={msg.id} style={{ padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', gap: '8px' }}>
+                          <strong style={{ color: '#fff', fontSize: '0.88rem' }}>{msg.name} ({msg.email})</strong>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <span style={{ fontSize: '0.74rem', color: 'var(--text-muted)' }}>{msg.created_at}</span>
+                            <button onClick={() => handleDeleteMessage(msg.id)} style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer' }} title="Delete message">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
+                        {msg.subject && <div style={{ fontSize: '0.8rem', color: 'var(--cyan)', marginBottom: '4px' }}>{msg.subject}</div>}
+                        <p style={{ fontSize: '0.84rem', color: 'var(--text-secondary)', margin: 0 }}>{msg.message}</p>
                       </div>
                     ))}
                   </div>
@@ -570,64 +506,68 @@ export default function AdminDashboard({ isOpen, onClose, onProjectCreated, proj
               </div>
             )}
 
-            {/* Tab 3: Messages Inbox */}
-            {activeTab === 'inbox' && (
+            {activeTab === 'analytics' && (
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Inquiries submitted via portfolio contact form</span>
-                  <button onClick={fetchMessages} style={{ background: 'none', border: 'none', color: 'var(--cyan)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem' }}>
-                    <RefreshCw size={14} />
-                    <span>Refresh</span>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                  <span style={{ fontSize: '0.86rem', color: 'var(--text-secondary)' }}>
+                    Privacy-friendly engagement metrics (no cookies, no IP addresses, no PII)
+                  </span>
+                  <button onClick={fetchAnalytics} style={{ background: 'none', border: 'none', color: 'var(--cyan)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem' }}>
+                    <RefreshCw size={14} /> Refresh
                   </button>
                 </div>
 
-                {loadingMessages ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>Loading messages...</div>
-                ) : messages.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                    No visitor inquiries received yet. Any messages submitted through the contact form appear here immediately.
-                  </div>
+                {loadingAnalytics || !analytics ? (
+                  <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-secondary)' }}>Loading analytics...</div>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                    {messages.map((msg) => (
-                      <div key={msg.id} style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                          <span style={{ fontWeight: '700', color: '#fff' }}>{msg.name} ({msg.email})</span>
-                          <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{msg.created_at}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '10px' }}>
+                      {[
+                        { label: 'Resume Downloads', val: analytics.counts.resume_download, color: 'var(--cyan)' },
+                        { label: 'CV Downloads', val: analytics.counts.cv_download, color: '#38bdf8' },
+                        { label: 'FinSight Runs', val: analytics.counts.sandbox_finsight, color: '#10b981' },
+                        { label: 'PayMatch Runs', val: analytics.counts.sandbox_paymatch, color: '#10b981' },
+                        { label: 'FinSim Runs', val: analytics.counts.sandbox_finsim, color: '#10b981' },
+                        { label: 'JD Fit Checks', val: analytics.counts.jd_match_run, color: '#c084fc' },
+                        { label: 'Jarvis Chats', val: analytics.counts.jarvis_chat, color: '#c084fc' },
+                        { label: 'Total Inquiries', val: analytics.inquiries_count, color: '#fbbf24' },
+                      ].map((m, idx) => (
+                        <div key={idx} style={{ padding: '12px', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-subtle)' }}>
+                          <div style={{ fontSize: '0.73rem', color: 'var(--text-muted)' }}>{m.label}</div>
+                          <div style={{ fontSize: '1.25rem', fontWeight: '800', color: m.color, marginTop: '4px' }}>{m.val}</div>
                         </div>
-                        {msg.subject && <div style={{ fontSize: '0.88rem', color: 'var(--cyan)', marginBottom: '6px' }}>Subject: {msg.subject}</div>}
-                        <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.5' }}>{msg.message}</p>
+                      ))}
+                    </div>
+
+                    {analytics.recent_events?.length > 0 && (
+                      <div style={{ padding: '12px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '0.78rem', fontWeight: '700', color: '#fff', marginBottom: '8px' }}>Recent Anonymous Events</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                          {analytics.recent_events.map((ev, idx) => (
+                            <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                              <span><strong style={{ color: 'var(--cyan)' }}>{ev.event_type}</strong> {ev.metadata ? `(${ev.metadata})` : ''}</span>
+                              <span style={{ color: 'var(--text-muted)' }}>{ev.created_at}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 )}
               </div>
             )}
 
-            {/* Tab 4: Jarvis AI Sandbox */}
             {activeTab === 'jarvis' && (
               <div>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                  Test Jarvis AI agentic responses, inspect knowledge boundaries, and verify how it introduces Suryakiran.
-                </p>
-
-                <form onSubmit={handleTestJarvis} style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
-                  <input
-                    type="text"
-                    placeholder="Ask Jarvis anything (e.g. Tell me about Suryakiran's college at KMM)"
-                    value={jarvisTestPrompt}
-                    onChange={(e) => setJarvisTestPrompt(e.target.value)}
-                    className="form-input"
-                  />
-                  <button type="submit" disabled={testingJarvis} className="btn-primary" style={{ padding: '10px 20px', whiteSpace: 'nowrap' }}>
-                    {testingJarvis ? 'Querying...' : 'Ask Jarvis'}
+                <form onSubmit={handleTestJarvis} style={{ display: 'flex', gap: '8px', marginBottom: '14px' }}>
+                  <input type="text" placeholder="Test a Jarvis prompt..." value={jarvisTestPrompt} onChange={(e) => setJarvisTestPrompt(e.target.value)} className="form-input" />
+                  <button type="submit" disabled={testingJarvis} className="btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                    {testingJarvis ? 'Running...' : 'Test Agent'}
                   </button>
                 </form>
-
                 {jarvisTestResponse && (
-                  <div style={{ padding: '16px', background: 'rgba(168, 85, 247, 0.08)', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
-                    <div style={{ fontSize: '0.82rem', fontWeight: '700', color: '#c084fc', marginBottom: '6px' }}>Jarvis Response:</div>
-                    <p style={{ fontSize: '0.9rem', color: '#fff', lineHeight: '1.6', whiteSpace: 'pre-line' }}>{jarvisTestResponse}</p>
+                  <div style={{ padding: '14px', borderRadius: '12px', background: 'rgba(168,85,247,0.08)', border: '1px solid rgba(168,85,247,0.3)', color: '#fff', fontSize: '0.86rem', whiteSpace: 'pre-line' }}>
+                    {jarvisTestResponse}
                   </div>
                 )}
               </div>

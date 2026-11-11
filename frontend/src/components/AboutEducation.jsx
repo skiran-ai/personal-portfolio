@@ -1,270 +1,160 @@
 import React from 'react';
-import { GraduationCap, Award, BookOpen, MapPin, Cpu, Code2, Server } from 'lucide-react';
+import { GraduationCap, MapPin, Cpu, Code2, Server, CheckCircle2 } from 'lucide-react';
 import useScrollReveal from '../hooks/useScrollReveal';
+import { FALLBACK_PROFILE } from '../data/portfolioFallback';
 
-export default function AboutEducation() {
+export default function AboutEducation({ profile = FALLBACK_PROFILE }) {
   const [sectionRef, sectionVisible] = useScrollReveal();
-  const [bannerRef, bannerVisible] = useScrollReveal({ threshold: 0.1 });
-  const educationList = [
-    {
-      degree: "Python Django Full Stack Developer",
-      institution: "Avodha",
-      location: "Vyttila, Ernakulam, Kerala",
-      type: "Professional Certification (6 Months)",
-      period: "Pursuing (Month 5 of 6 • 1 Mo Remaining)",
-      note: "Intensive 6-month hands-on immersion in Python 3, Django architecture, Django REST Framework (DRF), database engineering, and end-to-end web deployment.",
-      tag: "Specialization",
-      accent: "var(--cyan)",
-      icon: Code2
-    },
-    {
-      degree: "B.Sc Computer Science",
-      institution: "KMM",
-      location: "Thrikkakara, Ernakulam, Kerala",
-      type: "Undergraduate Degree",
-      period: "Coursework Completed (2023 – 2026)",
-      note: "Coursework completed with specialization in Computer Science fundamentals, Software Architecture, Database Engineering, and Object-Oriented Programming.",
-      tag: "Degree",
-      accent: "#38bdf8",
-      icon: GraduationCap
-    },
-    {
-      degree: "Higher Secondary Education (HSS)",
-      institution: "Sahodaran Memorial Higher Secondary School",
-      location: "Cherai, Ernakulam, Kerala",
-      type: "Higher Secondary",
-      period: "Completed",
-      note: "Academic focus on Computer Science, Mathematics, and Analytical Problem Solving.",
-      tag: "HSS",
-      accent: "#a855f7",
-      icon: BookOpen
-    },
-    {
-      degree: "Secondary School Leaving Certificate (SSLC)",
-      institution: "Rama Varma Union High School",
-      location: "Cherai, Ernakulam, Kerala",
-      type: "High School",
-      period: "Completed",
-      note: "Foundational schooling with high distinction in Mathematics and Science subjects.",
-      tag: "SSLC",
-      accent: "#fbbf24",
-      icon: Award
-    }
-  ];
+  const pillars = profile?.engineering_pillars || FALLBACK_PROFILE.engineering_pillars;
+  const allEdu = profile?.education || FALLBACK_PROFILE.education;
+  const primaryEdu = allEdu.filter((e) => e.tier !== 'secondary');
+  const secondaryEdu = allEdu.filter((e) => e.tier === 'secondary');
+
+  const pillarIcons = [Server, Cpu, Code2];
+  const pillarColors = ['var(--cyan)', '#c084fc', '#38bdf8'];
 
   return (
-    <section id="about" style={{ padding: 'clamp(60px, 8vw, 100px) clamp(16px, 4vw, 24px)', position: 'relative', zIndex: 10 }}>
+    <section id="about" className="section-pad">
       <div
         ref={sectionRef}
+        className="container-shell"
         style={{
           opacity: sectionVisible ? 1 : 0,
-          transform: sectionVisible ? 'translateY(0)' : 'translateY(36px)',
-          transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)'
+          transform: sectionVisible ? 'translateY(0)' : 'translateY(32px)',
+          transition: 'opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-      <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
-        {/* Section Header */}
-        <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '4px 14px',
-            borderRadius: '20px',
-            background: 'rgba(0, 242, 254, 0.08)',
-            border: '1px solid rgba(0, 242, 254, 0.25)',
-            marginBottom: '12px'
-          }}>
-            <GraduationCap size={15} color="var(--cyan)" />
-            <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--cyan)' }}>ACADEMIC & BACKGROUND</span>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <div className="section-index-pill">
+            <Cpu size={14} color="var(--cyan)" />
+            <span>01 // ENGINEERING APPROACH &amp; CREDENTIALS</span>
           </div>
-          <h2 style={{ fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: '800', color: '#fff', marginBottom: '12px' }}>
-            Education & <span className="gradient-text-cyan">Profile</span>
+          <h2 style={{ fontSize: 'clamp(1.9rem, 3.3vw, 2.75rem)', fontWeight: '800', color: '#fff', marginBottom: '10px' }}>
+            How I <span className="font-serif-accent" style={{ color: 'var(--cyan)', fontSize: '1.12em' }}>Build &amp; Ship</span>
           </h2>
-          <p style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto', fontSize: '0.98rem' }}>
-            Verified academic milestones and the engineering discipline driving my full-stack and AI development.
+          <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto', fontSize: '0.96rem' }}>
+            Focused on verifiable backend systems, schema-safe AI workflows, and real full-stack execution rather than decorative claims.
           </p>
         </div>
 
-        {/* Grid: Education & Certification Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 260px), 1fr))',
-          gap: '24px',
-          marginBottom: '50px'
-        }}>
-          {educationList.map((edu, idx) => {
-            const IconComponent = edu.icon || GraduationCap;
+        {/* 1. Engineering Pillars First */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: '20px',
+            marginBottom: '40px',
+          }}
+        >
+          {pillars.map((pillar, idx) => {
+            const Icon = pillarIcons[idx % pillarIcons.length];
+            const color = pillarColors[idx % pillarColors.length];
             return (
-            <div
-              key={idx}
-              className="glass-panel"
-              style={{
-                padding: '28px',
-                position: 'relative',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                transition: 'transform 0.3s ease, border-color 0.3s ease'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-                e.currentTarget.style.borderColor = edu.accent;
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.borderColor = 'var(--border-subtle)';
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '44px',
-                    height: '44px',
+              <div
+                key={pillar.id || idx}
+                className="glass-panel"
+                style={{ padding: '26px', display: 'flex', flexDirection: 'column', gap: '12px' }}
+              >
+                <div
+                  style={{
+                    width: '42px',
+                    height: '42px',
                     borderRadius: '12px',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: `1px solid ${edu.accent}40`,
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: `1px solid ${color}`,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: edu.accent
-                  }}>
-                    <IconComponent size={22} />
-                  </div>
-                  <span style={{
-                    fontSize: '0.72rem',
-                    fontWeight: '700',
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    background: `${edu.accent}18`,
-                    color: edu.accent,
-                    border: `1px solid ${edu.accent}40`
-                  }}>
-                    {edu.tag}
-                  </span>
+                    color,
+                  }}
+                >
+                  <Icon size={20} />
                 </div>
-
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '700', color: '#fff', marginBottom: '8px' }}>
-                  {edu.degree}
-                </h3>
-
-                <div style={{ fontSize: '1.05rem', fontWeight: '600', color: edu.accent, marginBottom: '8px' }}>
-                  {edu.institution}
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
-                  <MapPin size={14} color="var(--text-muted)" />
-                  <span>{edu.location}</span>
-                </div>
-
+                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: '#fff' }}>{pillar.title}</h3>
                 <p style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: '1.6' }}>
-                  {edu.note}
+                  {pillar.summary}
                 </p>
               </div>
-
-              <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Status</span>
-                <span style={{ fontSize: '0.82rem', fontWeight: '600', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
-                  {edu.period}
-                </span>
-              </div>
-            </div>
             );
           })}
         </div>
 
-        {/* Engineering Highlights Banner */}
+        {/* 2. Primary Technical & Degree Credentials */}
         <div
-          ref={bannerRef}
-          className="glass-panel"
           style={{
-            padding: 'clamp(20px, 4vw, 36px)',
-            background: 'linear-gradient(135deg, rgba(14, 20, 36, 0.85) 0%, rgba(20, 29, 52, 0.65) 100%)',
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))',
-            gap: 'clamp(20px, 3vw, 30px)',
-            opacity: bannerVisible ? 1 : 0,
-            transform: bannerVisible ? 'translateY(0)' : 'translateY(28px)',
-            transition: 'opacity 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
+            gap: '20px',
+            marginBottom: '20px',
           }}
         >
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-            <div style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'rgba(0, 242, 254, 0.1)',
-              border: '1px solid rgba(0, 242, 254, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--cyan)',
-              flexShrink: 0
-            }}>
-              <Server size={22} />
-            </div>
-            <div>
-              <h4 style={{ color: '#fff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '6px' }}>
-                Robust Django Architecture
-              </h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', lineHeight: '1.6' }}>
-                Engineering secure REST APIs, ORM database query optimizations, and seamless middleware integration.
-              </p>
-            </div>
-          </div>
+          {primaryEdu.map((edu, idx) => (
+            <div
+              key={idx}
+              className="glass-panel"
+              style={{
+                padding: '26px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                borderColor: idx === 0 ? 'rgba(0, 242, 254, 0.25)' : 'var(--border-subtle)',
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', gap: '8px', flexWrap: 'wrap' }}>
+                  <span className="tech-pill">{idx === 0 ? 'Professional Training' : 'Undergraduate Degree'}</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: '600', color: '#10b981', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <CheckCircle2 size={13} />
+                    {edu.period}
+                  </span>
+                </div>
 
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-            <div style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'rgba(168, 85, 247, 0.1)',
-              border: '1px solid rgba(168, 85, 247, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#c084fc',
-              flexShrink: 0
-            }}>
-              <Cpu size={22} />
+                <h3 style={{ fontSize: '1.18rem', fontWeight: '700', color: '#fff', marginBottom: '6px' }}>
+                  {edu.degree}
+                </h3>
+                <div style={{ fontSize: '0.95rem', fontWeight: '600', color: 'var(--cyan)', marginBottom: '8px' }}>
+                  {edu.institution}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                  <MapPin size={13} />
+                  <span>{edu.location}</span>
+                </div>
+                <p style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                  {edu.highlight}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 style={{ color: '#fff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '6px' }}>
-                Agentic AI Integration
-              </h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', lineHeight: '1.6' }}>
-                Connecting autonomous agents like Jarvis with speech synthesis, NLP intent resolution, and LLM backends.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-            <div style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '12px',
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#38bdf8',
-              flexShrink: 0
-            }}>
-              <Code2 size={22} />
-            </div>
-            <div>
-              <h4 style={{ color: '#fff', fontSize: '1.05rem', fontWeight: '700', marginBottom: '6px' }}>
-                Reactive Frontend & 3D Web
-              </h4>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.86rem', lineHeight: '1.6' }}>
-                Building smooth user experiences in React with Three.js WebGL canvas animations and intuitive design.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
-      </div>
+
+        {/* 3. Compact Secondary Schooling Strip (No oversized cards for SSLC/HSS) */}
+        {secondaryEdu.length > 0 && (
+          <div
+            className="glass-panel"
+            style={{
+              padding: '16px 22px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '14px',
+              background: 'rgba(13, 19, 34, 0.45)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.82rem', fontWeight: '700', color: 'var(--text-secondary)' }}>
+              <GraduationCap size={16} color="var(--text-muted)" />
+              <span>Earlier Schooling:</span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '18px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+              {secondaryEdu.map((edu, idx) => (
+                <span key={idx}>
+                  <strong style={{ color: '#e2e8f0' }}>{edu.degree}</strong> — {edu.institution} ({edu.location})
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -20,6 +20,15 @@ export default function ThreeCanvas() {
       mount.removeChild(mount.firstChild);
     }
 
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+      return;
+    }
+
     // Helper: Test WebGL availability
     const isWebGLSupported = () => {
       try {
@@ -111,8 +120,8 @@ export default function ThreeCanvas() {
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         mount.appendChild(renderer.domElement);
 
-        // Particle Cosmos
-        const particleCount = window.innerWidth < 768 ? 700 : 1400;
+        // Lightweight Particle Cosmos
+        const particleCount = window.innerWidth < 768 ? 350 : 720;
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(particleCount * 3);
         const colors = new Float32Array(particleCount * 3);
@@ -189,9 +198,11 @@ export default function ThreeCanvas() {
         window.addEventListener('scroll', handleScroll, { passive: true });
 
         const handleResize = () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
+          const w = mount.clientWidth || window.innerWidth;
+          const h = mount.clientHeight || window.innerHeight;
+          camera.aspect = w / h;
           camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setSize(w, h);
         };
         window.addEventListener('resize', handleResize);
 
@@ -200,6 +211,7 @@ export default function ThreeCanvas() {
 
         const animate = () => {
           animationId = requestAnimationFrame(animate);
+          if (document.hidden) return;
           const elapsedTime = (performance.now() - startTime) * 0.001;
 
           targetX += (mouseX - targetX) * 0.05;
@@ -265,12 +277,13 @@ export default function ThreeCanvas() {
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
         zIndex: 0,
         pointerEvents: 'none',
         overflow: 'hidden',
-        background: 'radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0, 242, 254, 0.08) 0%, transparent 60%)'
+        background:
+          'radial-gradient(ellipse at 82% 18%, rgba(168, 85, 247, 0.09) 0%, transparent 55%), radial-gradient(ellipse at 18% 82%, rgba(34, 211, 238, 0.07) 0%, transparent 55%)',
       }}
     />
   );

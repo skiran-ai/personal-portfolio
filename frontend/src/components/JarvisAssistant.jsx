@@ -1,86 +1,68 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bot, Mic, MicOff, Send, X, Volume2, VolumeX, Sparkles, MessageSquare, Play, RefreshCw, ChevronDown } from 'lucide-react';
+import { Bot, Send, X, Volume2, VolumeX, Sparkles, Briefcase, MessageSquare, CheckCircle2, AlertCircle } from 'lucide-react';
 import { API_BASE } from '../config/api';
+import { runFallbackJarvisChat, runFallbackJdMatch } from '../data/portfolioFallback';
 
 export default function JarvisAssistant({
   isOpen,
+  initialTab = 'chat',
   onClose,
   onOpenResume,
+  onOpenSandbox,
   isSpeaking,
   onPlayVoice,
   onStopVoice,
-  introText,
-  timeGreeting = "Greetings"
+  apiHealth,
 }) {
+  const [activeTab, setActiveTab] = useState(initialTab);
+  const [prevInitialTab, setPrevInitialTab] = useState(initialTab);
+  if (initialTab !== prevInitialTab) {
+    setPrevInitialTab(initialTab);
+    setActiveTab(initialTab);
+  }
+  const msgIdRef = useRef(2);
   const [messages, setMessages] = useState([
     {
       id: 1,
       sender: 'jarvis',
-      text: `${timeGreeting}! I am Jarvis, the autonomous Agentic AI Assistant engineered for Suryakiran P J. I'm here to explain his AI-integrated Python Django expertise, walk you through his background, or read his hero section aloud. How may I assist you today?`
-    }
+      text: "Hello! I'm Jarvis, grounded on Suryakiran's verified profile and Django project database. Ask technical questions, launch a live project sandbox, or switch to the JD Fit tab to evaluate a role.",
+      followups: ['Open FinSight AI sandbox', 'What are PayMatch AI trade-offs?', 'Open ATS Resume'],
+    },
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [welcomeBannerVisible, setWelcomeBannerVisible] = useState(false);
+
+  // JD Match Analyzer state
+  const [jdText, setJdText] = useState('');
+  const [jdLoading, setJdLoading] = useState(false);
+  const [jdResult, setJdResult] = useState(null);
+  const [jdError, setJdError] = useState('');
+
   const chatEndRef = useRef(null);
 
-  // Auto-scroll chat to latest message
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, activeTab]);
 
-  // Speech Recognition setup (Mic input)
-  const handleMicToggle = () => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in this browser. Please use Google Chrome or Edge.");
-      return;
-    }
-
-    if (isListening) {
-      setIsListening(false);
-      return;
-    }
-
-    try {
-      const recognition = new SpeechRecognition();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      recognition.onstart = () => {
-        setIsListening(true);
-      };
-
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        setInputMessage(transcript);
-        sendMessage(transcript);
-        setIsListening(false);
-      };
-
-      recognition.onerror = () => {
-        setIsListening(false);
-      };
-
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
-      recognition.start();
-    } catch (err) {
-      console.error(err);
-      setIsListening(false);
-    }
+  const handleAction = (action) => {
+    if (!action || action === 'NONE') return;
+    if (action === 'OPEN_RESUME') onOpenResume?.();
+    else if (action === 'SCROLL_ABOUT') document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
+    else if (action === 'SCROLL_SKILLS') document.getElementById('skills')?.scrollIntoView({ behavior: 'smooth' });
+    else if (action === 'SCROLL_PROJECTS') document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+    else if (action === 'SCROLL_CONTACT') document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+    else if (action === 'OPEN_SANDBOX_FINSIGHT') onOpenSandbox?.('finsight');
+    else if (action === 'OPEN_SANDBOX_PAYMATCH') onOpenSandbox?.('paymatch');
+    else if (action === 'OPEN_SANDBOX_FINSIM') onOpenSandbox?.('finsim');
   };
 
   const sendMessage = async (textToSend) => {
-    const msg = textToSend || inputMessage;
-    if (!msg.trim()) return;
+    const msg = (textToSend ?? inputMessage).trim();
+    if (!msg) return;
 
-    const userMsg = { id: Date.now(), sender: 'user', text: msg };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMsg = { id: msgIdRef.current++, sender: 'user', text: msg };
+    const nextMessages = [...messages, userMsg];
+    setMessages(nextMessages);
     setInputMessage('');
     setLoading(true);
 
@@ -88,267 +70,180 @@ export default function JarvisAssistant({
       const res = await fetch(`${API_BASE}/jarvis/chat/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
+        body: JSON.stringify({
+          message: msg,
+          history: nextMessages.slice(-6).map((m) => ({ sender: m.sender, text: m.text })),
+        }),
       });
+      const ct = res.headers.get('content-type') || '';
+      if (!res.ok || !ct.includes('application/json')) throw new Error('Backend unavailable');
       const data = await res.json();
 
-      const jarvisReply = data.reply || "I am processing your query regarding Suryakiran's engineering portfolio.";
-      const jarvisMsg = { id: Date.now() + 1, sender: 'jarvis', text: jarvisReply };
+      const jarvisMsg = {
+        id: msgIdRef.current++,
+        sender: 'jarvis',
+        text: data.reply || 'No response received.',
+        mode: data.mode,
+        followups: data.suggested_followups || [],
+      };
       setMessages((prev) => [...prev, jarvisMsg]);
-
-      // Voice read the response if desired
-      onPlayVoice(jarvisReply);
-
-      // Handle triggered actions
-      if (data.action === 'READ_HERO') {
-        onPlayVoice(introText);
-      } else if (data.action === 'OPEN_RESUME_MODAL') {
-        onOpenResume();
-      } else if (data.action === 'SCROLL_EDUCATION') {
-        document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' });
-      } else if (data.action === 'SCROLL_PROJECTS') {
-        document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-      } else if (data.action === 'SCROLL_CONTACT') {
-        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
-      }
-    } catch (err) {
+      handleAction(data.action);
+    } catch {
+      const fallback = runFallbackJarvisChat(msg);
       setMessages((prev) => [
         ...prev,
         {
-          id: Date.now() + 1,
+          id: msgIdRef.current++,
           sender: 'jarvis',
-          text: "I am temporarily operating in offline mode. Suryakiran is a Software Engineer specializing in Python Django Full Stack Development and Agentic AI."
-        }
+          mode: fallback.mode,
+          text: fallback.reply,
+          followups: fallback.suggested_followups || [],
+        },
       ]);
+      handleAction(fallback.action);
     } finally {
       setLoading(false);
     }
   };
 
-  const quickPrompts = [
-    "Who is Suryakiran?",
-    "Read Hero Section",
-    "Tell me about his education & training",
-    "What is his Python & Django tech stack?",
-    "How can I contact him?"
-  ];
+  const handleAnalyzeJD = async (e) => {
+    e.preventDefault();
+    if (jdText.trim().length < 20) {
+      setJdError('Please paste at least 20 characters of a Job Description.');
+      return;
+    }
+    setJdError('');
+    setJdLoading(true);
+    setJdResult(null);
+
+    try {
+      const res = await fetch(`${API_BASE}/jarvis/jd-match/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job_description: jdText }),
+      });
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) throw new Error('Non-JSON response');
+      const data = await res.json();
+      if (!res.ok || data.status === 'error') {
+        setJdError(data.message || 'Analysis failed.');
+      } else {
+        setJdResult(data);
+      }
+    } catch {
+      setJdResult(runFallbackJdMatch(jdText));
+    } finally {
+      setJdLoading(false);
+    }
+  };
+
+  const isLiveGemini = apiHealth?.jarvis_mode === 'gemini_live';
 
   return (
     <>
-      {/* 1. Onboarding Floating Welcome Notification on First Open */}
-      {welcomeBannerVisible && !isOpen && (
-        <div
-          style={{
-            position: 'fixed',
-            bottom: '90px',
-            right: 'clamp(12px, 3vw, 24px)',
-            width: 'calc(100vw - 32px)',
-            maxWidth: '360px',
-            background: 'rgba(14, 20, 36, 0.95)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(0, 242, 254, 0.4)',
-            borderRadius: '18px',
-            padding: '16px',
-            zIndex: 90,
-            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.2)',
-            animation: 'fadeIn 0.3s ease-out'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #a855f7 0%, #00f2fe 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff'
-              }}>
-                <Bot size={16} />
-              </div>
-              <span style={{ fontSize: '0.85rem', fontWeight: '700', color: '#fff' }}>Jarvis AI Assistant</span>
-            </div>
-            <button
-              onClick={() => setWelcomeBannerVisible(false)}
-              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
-            >
-              <X size={15} />
-            </button>
-          </div>
-
-          <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: '1.5', marginBottom: '12px' }}>
-            Hi! I am Jarvis, Suryakiran's AI Assistant. Would you like me to introduce Suryakiran and read the hero section?
-          </p>
-
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={() => {
-                onPlayVoice(introText);
-                setWelcomeBannerVisible(false);
-              }}
-              style={{
-                flex: 1,
-                padding: '7px 12px',
-                background: 'rgba(0, 242, 254, 0.15)',
-                border: '1px solid var(--cyan)',
-                color: 'var(--cyan)',
-                borderRadius: '8px',
-                fontSize: '0.78rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
-            >
-              <Volume2 size={14} />
-              <span>Voice Intro</span>
-            </button>
-
-            <button
-              onClick={() => {
-                setWelcomeBannerVisible(false);
-                onClose(); // toggles open
-              }}
-              style={{
-                padding: '7px 12px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid var(--border-subtle)',
-                color: '#fff',
-                borderRadius: '8px',
-                fontSize: '0.78rem',
-                cursor: 'pointer'
-              }}
-            >
-              Chat
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* 2. Floating Jarvis Orb Trigger Button (Bottom Right) */}
+      {/* Floating Jarvis Trigger */}
       <div style={{ position: 'fixed', bottom: 'clamp(16px, 3vw, 24px)', right: 'clamp(16px, 3vw, 24px)', zIndex: 90 }}>
         <button
           onClick={onClose}
           style={{
-            width: '60px',
-            height: '60px',
+            width: '58px',
+            height: '58px',
             borderRadius: '50%',
             background: 'linear-gradient(135deg, #0284c7 0%, #00f2fe 100%)',
-            border: '2px solid rgba(255, 255, 255, 0.4)',
-            boxShadow: '0 0 25px rgba(0, 242, 254, 0.6), 0 10px 20px rgba(0,0,0,0.5)',
+            border: '2px solid rgba(255, 255, 255, 0.35)',
+            boxShadow: '0 0 22px rgba(0, 242, 254, 0.45), 0 10px 20px rgba(0,0,0,0.5)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: '#07090e',
             cursor: 'pointer',
-            transition: 'transform 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-            position: 'relative'
           }}
-          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.08)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-          title="Open Jarvis AI Assistant"
+          title="Open Jarvis AI & JD Fit Analyzer"
+          aria-label="Open Jarvis AI"
         >
-          <Bot size={28} />
-          {isSpeaking && (
-            <span
-              style={{
-                position: 'absolute',
-                top: '-3px',
-                right: '-3px',
-                width: '16px',
-                height: '16px',
-                borderRadius: '50%',
-                background: '#10b981',
-                border: '2px solid #07090e',
-                animation: 'pulseGlow 1.5s infinite'
-              }}
-            />
-          )}
+          <Bot size={26} />
         </button>
       </div>
 
-      {/* 3. Full Jarvis AI Interactive Chat & Voice Drawer */}
+      {/* Drawer */}
       {isOpen && (
         <div
           style={{
             position: 'fixed',
-            bottom: '90px',
+            bottom: '86px',
             right: 'clamp(12px, 3vw, 24px)',
-            width: 'calc(100vw - 32px)',
-            maxWidth: '420px',
-            height: '600px',
-            maxHeight: 'calc(100vh - 110px)',
-            background: 'rgba(11, 16, 29, 0.96)',
+            width: 'calc(100vw - 24px)',
+            maxWidth: '450px',
+            height: 'min(620px, calc(100dvh - 104px))',
+            maxHeight: 'calc(100dvh - 104px)',
+            background: 'rgba(11, 16, 29, 0.98)',
             backdropFilter: 'blur(20px)',
             border: '1px solid rgba(0, 242, 254, 0.35)',
-            borderRadius: '24px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 35px rgba(0, 242, 254, 0.15)',
+            borderRadius: '22px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.85)',
             zIndex: 95,
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden'
+            overflow: 'hidden',
           }}
         >
           {/* Header */}
           <div
             style={{
-              padding: '16px 20px',
+              padding: '14px 18px',
               borderBottom: '1px solid var(--border-subtle)',
-              background: 'linear-gradient(90deg, rgba(2, 132, 199, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%)',
+              background: 'linear-gradient(90deg, rgba(2, 132, 199, 0.14) 0%, rgba(168, 85, 247, 0.14) 100%)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between'
+              justifyContent: 'space-between',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '10px',
-                background: 'linear-gradient(135deg, #00f2fe 0%, #a855f7 100%)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#07090e'
-              }}>
-                <Bot size={20} />
+              <div
+                style={{
+                  width: '34px',
+                  height: '34px',
+                  borderRadius: '10px',
+                  background: 'linear-gradient(135deg, #00f2fe 0%, #a855f7 100%)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#07090e',
+                }}
+              >
+                <Bot size={19} />
               </div>
               <div>
-                <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  Jarvis AI Assistant
-                  <span style={{ fontSize: '0.7rem', padding: '2px 6px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399' }}>
-                    Agentic
+                <div style={{ fontSize: '0.94rem', fontWeight: '700', color: '#fff', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  Jarvis Agent
+                  <span
+                    style={{
+                      fontSize: '0.66rem',
+                      padding: '2px 7px',
+                      borderRadius: '6px',
+                      background: isLiveGemini ? 'rgba(16, 185, 129, 0.16)' : 'rgba(56, 189, 248, 0.15)',
+                      color: isLiveGemini ? '#34d399' : '#38bdf8',
+                    }}
+                  >
+                    {isLiveGemini ? `Live • ${apiHealth?.gemini_model || 'Gemini'}` : 'Grounded Mode'}
                   </span>
                 </div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)' }}>
-                  Suryakiran's AI Representative
+                  Schema-enforced Q&amp;A &amp; Job Fit Evaluator
                 </div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {isSpeaking ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {isSpeaking && (
                 <button
                   onClick={onStopVoice}
-                  title="Mute voice"
+                  title="Stop Audio"
                   style={{ background: 'none', border: 'none', color: '#f87171', cursor: 'pointer', padding: '4px' }}
                 >
                   <VolumeX size={18} />
                 </button>
-              ) : (
-                <button
-                  onClick={() => onPlayVoice(introText)}
-                  title="Read Hero Intro"
-                  style={{ background: 'none', border: 'none', color: 'var(--cyan)', cursor: 'pointer', padding: '4px' }}
-                >
-                  <Volume2 size={18} />
-                </button>
               )}
-
               <button
                 onClick={onClose}
                 style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', padding: '4px' }}
@@ -358,147 +253,271 @@ export default function JarvisAssistant({
             </div>
           </div>
 
-          {/* Quick Prompts Bar */}
-          <div style={{
-            padding: '10px 16px',
-            background: 'rgba(0, 0, 0, 0.25)',
-            borderBottom: '1px solid var(--border-subtle)',
-            overflowX: 'auto',
-            display: 'flex',
-            gap: '8px',
-            whiteSpace: 'nowrap'
-          }}>
-            {quickPrompts.map((prompt, pIdx) => (
-              <button
-                key={pIdx}
-                onClick={() => sendMessage(prompt)}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '14px',
-                  padding: '4px 10px',
-                  color: 'var(--text-secondary)',
-                  fontSize: '0.74rem',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.color = 'var(--cyan)'; e.currentTarget.style.borderColor = 'var(--cyan)'; }}
-                onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-
-          {/* Chat Messages Body */}
-          <div style={{ flex: 1, padding: '16px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                style={{
-                  alignSelf: m.sender === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  padding: '12px 16px',
-                  borderRadius: m.sender === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                  background: m.sender === 'user' ? 'linear-gradient(135deg, #0284c7 0%, #00f2fe 100%)' : 'rgba(255, 255, 255, 0.05)',
-                  color: m.sender === 'user' ? '#07090e' : '#fff',
-                  border: m.sender === 'user' ? 'none' : '1px solid var(--border-subtle)',
-                  fontSize: '0.88rem',
-                  lineHeight: '1.5',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                  whiteSpace: 'pre-line'
-                }}
-              >
-                {m.text}
-              </div>
-            ))}
-
-            {loading && (
-              <div style={{
-                alignSelf: 'flex-start',
-                padding: '10px 16px',
-                borderRadius: '16px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: 'var(--cyan)',
-                fontSize: '0.82rem',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <Sparkles size={14} className="animate-spin" />
-                <span>Jarvis is thinking...</span>
-              </div>
-            )}
-            <div ref={chatEndRef} />
-          </div>
-
-          {/* Message Input Footer with Speech Recognition */}
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              sendMessage();
-            }}
-            style={{
-              padding: '14px 16px',
-              borderTop: '1px solid var(--border-subtle)',
-              background: 'rgba(7, 9, 14, 0.8)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '10px'
-            }}
-          >
-            {/* Mic Button */}
+          {/* Mode Tabs */}
+          <div style={{ display: 'flex', padding: '8px 14px', gap: '8px', borderBottom: '1px solid var(--border-subtle)', background: 'rgba(0,0,0,0.25)' }}>
             <button
               type="button"
-              onClick={handleMicToggle}
-              title={isListening ? "Listening... click to stop" : "Speak to Jarvis"}
+              onClick={() => setActiveTab('chat')}
               style={{
-                width: '38px',
-                height: '38px',
+                flex: 1,
+                padding: '7px 10px',
                 borderRadius: '10px',
-                background: isListening ? 'rgba(239, 68, 68, 0.2)' : 'rgba(255, 255, 255, 0.05)',
-                border: isListening ? '1px solid #ef4444' : '1px solid var(--border-subtle)',
-                color: isListening ? '#f87171' : 'var(--text-secondary)',
+                background: activeTab === 'chat' ? 'rgba(0, 242, 254, 0.15)' : 'transparent',
+                border: activeTab === 'chat' ? '1px solid var(--cyan)' : '1px solid transparent',
+                color: activeTab === 'chat' ? 'var(--cyan)' : 'var(--text-secondary)',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: 'pointer',
-                flexShrink: 0
+                gap: '6px',
               }}
             >
-              {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              <MessageSquare size={14} />
+              <span>Technical Q&amp;A</span>
             </button>
-
-            <input
-              type="text"
-              placeholder="Ask Jarvis anything about Suryakiran..."
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              className="form-input"
-              style={{ padding: '10px 14px', fontSize: '0.88rem' }}
-            />
 
             <button
-              type="submit"
-              disabled={!inputMessage.trim()}
+              type="button"
+              onClick={() => setActiveTab('jd')}
               style={{
-                width: '38px',
-                height: '38px',
+                flex: 1,
+                padding: '7px 10px',
                 borderRadius: '10px',
-                background: inputMessage.trim() ? 'var(--cyan)' : 'rgba(255, 255, 255, 0.05)',
-                border: 'none',
-                color: '#07090e',
+                background: activeTab === 'jd' ? 'rgba(168, 85, 247, 0.18)' : 'transparent',
+                border: activeTab === 'jd' ? '1px solid #c084fc' : '1px solid transparent',
+                color: activeTab === 'jd' ? '#e9d5ff' : 'var(--text-secondary)',
+                fontSize: '0.8rem',
+                fontWeight: '600',
+                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                cursor: inputMessage.trim() ? 'pointer' : 'default',
-                flexShrink: 0,
-                transition: 'all 0.2s'
+                gap: '6px',
               }}
             >
-              <Send size={16} />
+              <Briefcase size={14} />
+              <span>JD Fit Analyzer</span>
             </button>
-          </form>
+          </div>
+
+          {/* Tab 1: Chat */}
+          {activeTab === 'chat' ? (
+            <>
+              <div style={{ flex: 1, padding: '14px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {messages.map((m) => (
+                  <div key={m.id} style={{ display: 'flex', flexDirection: 'column', alignItems: m.sender === 'user' ? 'flex-end' : 'flex-start', gap: '6px' }}>
+                    <div
+                      style={{
+                        maxWidth: '88%',
+                        padding: '11px 14px',
+                        borderRadius: m.sender === 'user' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
+                        background: m.sender === 'user' ? 'linear-gradient(135deg, #0284c7 0%, #00f2fe 100%)' : 'rgba(255, 255, 255, 0.05)',
+                        color: m.sender === 'user' ? '#07090e' : '#f8fafc',
+                        border: m.sender === 'user' ? 'none' : '1px solid var(--border-subtle)',
+                        fontSize: '0.85rem',
+                        lineHeight: '1.5',
+                        whiteSpace: 'pre-line',
+                      }}
+                    >
+                      {m.text}
+                      {m.sender === 'jarvis' && (
+                        <div style={{ marginTop: '6px', display: 'flex', justifyContent: 'flex-end' }}>
+                          <button
+                            type="button"
+                            onClick={() => onPlayVoice?.(m.text)}
+                            title="Read aloud"
+                            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem' }}
+                          >
+                            <Volume2 size={12} />
+                            <span>Listen</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    {m.followups?.length > 0 && (
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxWidth: '90%' }}>
+                        {m.followups.map((f, fIdx) => (
+                          <button
+                            key={fIdx}
+                            type="button"
+                            onClick={() => sendMessage(f)}
+                            style={{
+                              fontSize: '0.72rem',
+                              padding: '4px 9px',
+                              borderRadius: '10px',
+                              background: 'rgba(0, 242, 254, 0.08)',
+                              border: '1px solid rgba(0, 242, 254, 0.25)',
+                              color: 'var(--cyan)',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {f}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                {loading && (
+                  <div style={{ color: 'var(--cyan)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Sparkles size={14} />
+                    <span>Thinking...</span>
+                  </div>
+                )}
+                <div ref={chatEndRef} />
+              </div>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendMessage();
+                }}
+                style={{
+                  padding: '12px 14px',
+                  borderTop: '1px solid var(--border-subtle)',
+                  background: 'rgba(7, 9, 14, 0.85)',
+                  display: 'flex',
+                  gap: '8px',
+                }}
+              >
+                <input
+                  type="text"
+                  placeholder="Ask about Django architecture, PayMatch, or skills..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  className="form-input"
+                  style={{ padding: '9px 12px', fontSize: '0.85rem' }}
+                />
+                <button
+                  type="submit"
+                  disabled={!inputMessage.trim() || loading}
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '10px',
+                    background: inputMessage.trim() ? 'var(--cyan)' : 'rgba(255,255,255,0.06)',
+                    border: 'none',
+                    color: '#07090e',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: inputMessage.trim() ? 'pointer' : 'default',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Send size={15} />
+                </button>
+              </form>
+            </>
+          ) : (
+            /* Tab 2: JD Match Analyzer */
+            <div style={{ flex: 1, padding: '14px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <form onSubmit={handleAnalyzeJD} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                  Paste any Job Description below to evaluate Suryakiran&apos;s verified skills, project evidence, and honest gaps:
+                </label>
+                <textarea
+                  rows={4}
+                  className="form-input"
+                  placeholder="e.g. Seeking a Python / Django Backend Engineer with REST APIs, PostgreSQL, and LLM integration experience..."
+                  value={jdText}
+                  onChange={(e) => setJdText(e.target.value)}
+                  style={{ fontSize: '0.82rem', resize: 'vertical' }}
+                />
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button type="submit" disabled={jdLoading} className="btn-primary" style={{ flex: 1, padding: '10px', fontSize: '0.84rem' }}>
+                    <Sparkles size={15} />
+                    <span>{jdLoading ? 'Analyzing Fit...' : 'Evaluate Candidate Fit'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ padding: '8px 12px', fontSize: '0.78rem' }}
+                    onClick={() =>
+                      setJdText(
+                        'Junior Full Stack / Backend Engineer (Python, Django, DRF, PostgreSQL, React). Bonus: Gemini/LLM API structured outputs, Docker, Git.'
+                      )
+                    }
+                  >
+                    Sample JD
+                  </button>
+                </div>
+              </form>
+
+              {jdError && (
+                <div style={{ padding: '10px 12px', borderRadius: '10px', background: 'rgba(239,68,68,0.14)', border: '1px solid #ef4444', color: '#fca5a5', fontSize: '0.8rem', display: 'flex', gap: '6px' }}>
+                  <AlertCircle size={15} style={{ flexShrink: 0 }} />
+                  <span>{jdError}</span>
+                </div>
+              )}
+
+              {jdResult && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '6px' }}>
+                  <div style={{ padding: '12px', borderRadius: '12px', background: 'rgba(0, 242, 254, 0.08)', border: '1px solid rgba(0, 242, 254, 0.3)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                      <span style={{ fontSize: '0.76rem', fontWeight: '700', color: 'var(--cyan)' }}>VERIFIED FIT SCORE</span>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#fff' }}>{jdResult.match_score}%</span>
+                    </div>
+                    <p style={{ fontSize: '0.82rem', color: '#e2e8f0', lineHeight: '1.5' }}>{jdResult.verdict}</p>
+                  </div>
+
+                  {jdResult.matched_skills?.length > 0 && (
+                    <div>
+                      <div style={{ fontSize: '0.76rem', fontWeight: '700', color: 'var(--cyan)', marginBottom: '6px' }}>
+                        Matched Capabilities
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                        {jdResult.matched_skills.map((sk, idx) => (
+                          <span key={idx} className="tech-pill" style={{ fontSize: '0.71rem', padding: '3px 8px' }}>
+                            {sk}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <div style={{ fontSize: '0.76rem', fontWeight: '700', color: '#34d399', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <CheckCircle2 size={13} /> Matched Evidence
+                    </div>
+                    <ul style={{ paddingLeft: '16px', fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                      {jdResult.project_evidence?.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: '0.76rem', fontWeight: '700', color: '#fbbf24', marginBottom: '6px' }}>
+                      Honest Gaps / Ramp-Up Areas
+                    </div>
+                    <ul style={{ paddingLeft: '16px', fontSize: '0.78rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                      {jdResult.honest_gaps?.map((gap, idx) => (
+                        <li key={idx}>{gap}</li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {jdResult.interview_questions?.length > 0 && (
+                    <div>
+                      <div style={{ fontSize: '0.76rem', fontWeight: '700', color: '#c084fc', marginBottom: '6px' }}>
+                        Suggested Technical Interview Probes
+                      </div>
+                      <ul style={{ paddingLeft: '16px', fontSize: '0.77rem', color: 'var(--text-secondary)', lineHeight: '1.55' }}>
+                        {jdResult.interview_questions.map((q, idx) => (
+                          <li key={idx}>{q}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
     </>
